@@ -1,0 +1,9 @@
+# color scheme
+[[plugins]]
+repo = 'raphamorim/lucario'
+on_event = ['VimEnter']
+hook_post_source = '''
+    set background=dark
+    colorscheme lucario
+'''
+
