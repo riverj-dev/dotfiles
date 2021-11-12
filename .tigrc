@@ -6,6 +6,8 @@
 #               ██║   ██║╚██████╔╝██║  ██║╚██████╗
 #               ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝
 #
+#            http://mogile.web.fc2.com/tig/tigrc.5.html
+#            https://qiita.com/sfus/items/063797a1dd8fdc7d032f
 
 # main view の左端にコミットIDを表示する
 set main-view   = id date author:email-user commit-title:graph=yes,refs=yes
@@ -29,13 +31,21 @@ set show-changes = yes
 set split-view-height = 80%
 set status-show-untracked-dirs = yes
 
+# タブごとの空白の数
 set tab-size = 4
-set diff-context = 3
-set ignore-space = some
-set commit-order = topo
+# 差分の前後の表示行数（diff-context)を指定
+set diff-context = 6
+# 空白無視 (status-view では表示するが diff-view では無視する) (W でトグル)
+set ignore-space = at-eol
+# コミット表示順
+set commit-order = default
+# 検索での大文字小文字を無視
 set ignore-case = yes
+# 長い行をラップ
 set wrap-lines = yes
+# 子ビューが開かれている場合に子ビューにフォーカスするかどうか
 set focus-child = yes
+# Viewのリフレッシュ
 set refresh-mode = auto
 
 # -----------------------------------------------------------------------------
@@ -96,6 +106,12 @@ bind refs    <Esc>u ?sh -c "git checkout %(branch) && git pull %(remote) --ff-on
 bind generic P      ?git push -u %(remote) %(repo:head)
 
 # -----------------------------------------------------------------------------
+# brach
+# -----------------------------------------------------------------------------
+# B で ブランチ作成
+bind generic B      ?git branch "%(prompt Enter New Branch Name )"
+
+# -----------------------------------------------------------------------------
 # commit
 # -----------------------------------------------------------------------------
 # C で commit (refs での C は checkout, main での C は cherry-pick だが上書きする)
@@ -114,10 +130,8 @@ bind generic +      !git commit --amend --allow-empty
 # -----------------------------------------------------------------------------
 # L で reflog
 bind generic L      !sh -c "git reflog --pretty=raw | tig --pretty=raw"
-
 # _ で指定 reflog 番号にリセット
 bind generic _      ?git reset --hard HEAD@{"%(prompt Enter HEAD@{} number: )"}
-
 # ^ で reset --soft
 bind generic ^      ?git reset --soft HEAD^
 
@@ -136,7 +150,6 @@ bind refs    <Esc>. ?sh -c "git diff %(branch)..%(prompt git Diff Enter branch n
 
 # ~ で親コミットに移動 (default: :toggle line-graphics)
 bind generic ~      :goto %(commit)^
-
 # Alt-~ で表示のトグル (default: ~)
 bind generic <Right> :toggle line-graphics
 
@@ -170,20 +183,15 @@ bind status  H      ?git reset --hard HEAD
 # -----------------------------------------------------------------------------
 # D でブランチを削除 (マージ済みブランチのみ. 強制削除(branch -D) は `!`) (refs-view)
 bind refs    D      ?git branch -d %(branch)
-
 # D でトラッキングされていないファイルを削除 (status-view)
 bind status  D      ?git clean -d -f -- %(file)
-
 # D で stash を削除 (`!` と同じ) (stash-view)
 bind stash   D      ?git stash drop %(stash)
-
 # D でファイルを削除 (tree-view)
 bind tree    D      ?git rm %(file)
-
 # x でトラッキングされていないファイルをすべて削除
 bind main    x      ?git clean -d -f
 bind status  x      ?git clean -d -f
-
 # x でマージ済みローカルブランチをすべて削除 (master/develop 除く)
 bind refs    x      ?sh -c "git branch --merged | grep -vE '^\\*|master$|develop$' | xargs -I % git branch -d %"
 
@@ -192,7 +200,6 @@ bind refs    x      ?sh -c "git branch --merged | grep -vE '^\\*|master$|develop
 # -----------------------------------------------------------------------------
 # Ctrl-x で commit ID をクリップボードにコピー 
 bind generic <C-x>      @bash -c "echo -n '%(commit)' | xsel -bi"
-
 # Ctrl-x でファイルパスをクリップボードにコピー
 bind stage   <C-x>      @bash -c "echo -n '%(file)' | xsel -bi"
 bind status  <C-x>      @bash -c "echo -n '%(file)' | xsel -bi"
