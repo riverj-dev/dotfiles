@@ -94,6 +94,7 @@ bind main    <Esc>f :toggle commit-title-refs
 # -----------------------------------------------------------------------------
 # U で pull
 bind generic U      ?git pull %(remote)
+bind refs    U      ?git pull %(remote) %(branch)
 
 # Alt-u で該当ブランチを更新
 bind main    <Esc>u ?sh -c "git checkout %(branch) && git pull %(remote) --ff-only && git checkout -"
