@@ -83,6 +83,7 @@ bind log     k      :?^commit
 # F で fetch (default: :toggle file-name / :toggle commit-title-refs)
 bind generic F      ?git fetch %(remote)
 bind main    F      ?git fetch %(remote)
+bind refs    F      ?git fetch %(remote) %(branch)
 
 # Alt-f で :toggle file-name / :toggle commit-title-refs
 bind generic <Esc>f :toggle file-name
@@ -215,8 +216,8 @@ bind main    K      ?git cherry-pick %(commit)
 bind diff    K      ?git cherry-pick %(commit)
 
 # Alt-k で cherry-pick -n (--no-commit)
-bind main    <Esc>k ?git cherry-pick -n %(commit)
-bind diff    <Esc>k ?git cherry-pick -n %(commit)
+#bind main    <Esc>k ?git cherry-pick -n %(commit)
+#bind diff    <Esc>k ?git cherry-pick -n %(commit)
 
 # -----------------------------------------------------------------------------
 # checkout
