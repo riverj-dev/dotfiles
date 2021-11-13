@@ -110,6 +110,7 @@ bind generic P      ?git push -u %(remote) %(repo:head)
 # -----------------------------------------------------------------------------
 # B で ブランチ作成
 bind generic B      ?git branch "%(prompt Enter New Branch Name )"
+bind generic 5      !sh -c "git branch --contains"
 
 # -----------------------------------------------------------------------------
 # commit
