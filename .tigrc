@@ -10,43 +10,43 @@
 #            https://qiita.com/sfus/items/063797a1dd8fdc7d032f
 
 # main view の左端にコミットIDを表示する
-set main-view   = id date author:email-user commit-title:graph=yes,refs=yes
+set main-view                   = id date author commit-title:graph=yes,refs=yes
 
 # blame view の行数表示をON、intervalを1に
-set blame-view  = date:default author:email-user id:yes,color line-number:yes,interval=1 text
+set blame-view                  = date:default author:email-user id:yes,color line-number:yes,interval=1 text
 
 # Pager系の行数表示をON、intervalを1に (default: line-number:no,interval=5)
-set pager-view  = line-number:yes,interval=1 text
-set stage-view  = line-number:yes,interval=1 text
-set log-view    = line-number:yes,interval=1 text
-set blob-view   = line-number:yes,interval=1 text
-set diff-view   = line-number:yes,interval=1 text:yes,commit-title-overflow=no
+set pager-view                  = line-number:yes,interval=1 text
+set stage-view                  = line-number:yes,interval=1 text
+set log-view                    = line-number:yes,interval=1 text
+set blob-view                   = line-number:yes,interval=1 text
+set diff-view                   = line-number:yes,interval=1 text:yes,commit-title-overflow=no
 
 # Visualization
-set id-width = 8
-set blame-options = -C -C -C
-set horizontal-scroll = 33%
-set show-notes = yes
-set show-changes = yes
-set split-view-height = 80%
-set status-show-untracked-dirs = yes
+set id-width                    = 8
+set blame-options               = -C -C -C
+set horizontal-scroll           = 33%
+set show-notes                  = yes
+set show-changes                = yes
+set split-view-height           = 80%
+set status-show-untracked-dirs  = yes
 
 # タブごとの空白の数
-set tab-size = 4
+set tab-size                    = 4
 # 差分の前後の表示行数（diff-context)を指定
-set diff-context = 6
+set diff-context                = 6
 # 空白無視 (status-view では表示するが diff-view では無視する) (W でトグル)
-set ignore-space = at-eol
+set ignore-space                = at-eol
 # コミット表示順
-set commit-order = default
+set commit-order                = default
 # 検索での大文字小文字を無視
-set ignore-case = yes
+set ignore-case                 = yes
 # 長い行をラップ
-set wrap-lines = yes
+set wrap-lines                  = yes
 # 子ビューが開かれている場合に子ビューにフォーカスするかどうか
-set focus-child = yes
+set focus-child                 = yes
 # Viewのリフレッシュ
-set refresh-mode = auto
+set refresh-mode                = auto
 
 # -----------------------------------------------------------------------------
 # Bind Settings
