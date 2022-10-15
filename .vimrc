@@ -252,7 +252,7 @@ if ((has('nvim') || has('timers') || v:version >= 800) && has('python3'))
 
         " deoplete
         if ((has('nvim') || has('timers')) && has('python3')) && system('pip3 show neovim') !=# ''
-"            call dein#add('Shougo/deoplete.nvim')
+            call dein#add('Shougo/deoplete.nvim')
         elseif has('lua')
             call dein#add('Shougo/neocomplete.vim')
         endif
@@ -595,12 +595,13 @@ let Tlist_Exit_OnlyWindow=1
 let Tlist_Use_Right_Window=1
 
 " coc.nvim用設定
-" let g:node_client_debug = 1
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
 
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+" let g:node_client_debug = 1
+" nmap <silent> gd <Plug>(coc-definition)
+" nmap <silent> gy <Plug>(coc-type-definition)
+" nmap <silent> gi <Plug>(coc-implementation)
+" nmap <silent> gr <Plug>(coc-references)
 
 " easy motion用設定
 let g:EasyMotion_do_mapping=0
@@ -694,4 +695,3 @@ tnoremap <leader>jn <C-\><C-n>:FloatermNext<CR>
 "      autocmd TextYankPost * :call system('win32yank.exe -i', @")
 "    augroup END
 "endif
-
