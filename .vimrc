@@ -252,7 +252,8 @@ if ((has('nvim') || has('timers') || v:version >= 800) && has('python3'))
 
         " deoplete
         if ((has('nvim') || has('timers')) && has('python3')) && system('pip3 show neovim') !=# ''
-            call dein#add('Shougo/deoplete.nvim')
+"            call dein#add('Shougo/deoplete.nvim')
+            call dein#add('Shougo/neocomplete.vim')
         elseif has('lua')
             call dein#add('Shougo/neocomplete.vim')
         endif
