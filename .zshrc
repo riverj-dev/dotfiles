@@ -365,7 +365,7 @@ fi
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export PATH="$PATH:$HOME/.fzf/bin"
 export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
-export FZF_DEFAULT_OPTS='--height 50% --border'
+export FZF_DEFAULT_OPTS='--height 50% --reverse '
 export FZF_TMUX=1
 export FZF_TMUX_OPTS="-p 80%"
 
@@ -375,9 +375,8 @@ alias ff="fzf"
 function fzf-fileOpen() {
     query=$1
     if [ $# -eq 2 ]; then
-            [ -d "$1" ] && cd "$1" \
-                        || ( echo "'$1' is not directory!" && exit 1 )
-                query=$2
+        [ -d "$1" ] && cd "$1" || ( echo "'$1' is not directory!" && exit 1 )
+        query=$2
     fi
     selected_files=`fzf --query="$query" --multi --select-1 --preview 'bat --color=always {} ' --preview-window=right,+3`
     [ -n "$selected_files" ] && nvim `echo "$selected_files" | tr '\n' ' '`
@@ -386,18 +385,16 @@ alias ffo="fzf-fileOpen"
 
 # カレントディレクトリ以下のディレクトリをインクリメンタルサーチしてcdする
 function fzf-cd() {
-  local dir
-  dir=$(find ${1:-.} -path '*/\.*' -prune \
-                  -o -type d -print 2> /dev/null | fzf +m) &&
-  cd "$dir"
+    local dir
+    dir=$(find ${1:-.} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf +m) && cd "$dir"
 }
 alias ffd="fzf-cd"
 
 # カレントディレクトリ以下のファイルをGrepして開く
 function fzf-rg() {
-  grep_cmd="rg --hidden --no-ignore --line-number --no-heading --invert-match '^\s*$' 2>/dev/null"
-  read -r file line <<<"$(eval $grep_cmd | fzf --select-1 --exit-0 --delimiter : --preview 'bat --color=always {1} ' --preview-window=right,+{2}+3 | awk -F: '{print $1, $2}')"
-  [ -n "$file" ] && nvim `echo "$file" | tr '\n' ' '`
+    grep_cmd="rg --hidden --no-ignore --line-number --no-heading --invert-match '^\s*$' 2>/dev/null"
+    read -r file line <<<"$(eval $grep_cmd | fzf --select-1 --exit-0 --delimiter : --preview 'bat --color=always {1} ' --preview-window=right,+{2}+3 | awk -F: '{print $1, $2}')"
+    [ -n "$file" ] && nvim `echo "$file" | tr '\n' ' '`
 }
 alias ffg="fzf-rg"
 
@@ -408,25 +405,41 @@ function fzf-cdr() {
         BUFFER="cd ${selected_dir}"
         zle accept-line
     fi
-    zle clear-screen
+#    zle clear-screen
 }
 zle -N fzf-cdr
 bindkey '^E' fzf-cdr
 
 # historyをインクリメンタルサーチして表示する
 function fzf-select-history() {
-     local tac
-     if which tac > /dev/null; then
-         tac="tac"
-     else
-         tac="tail -r"
-     fi
-     BUFFER=$(\history -n 1 | eval $tac | fzf --query "$LBUFFER")
-     CURSOR=$#BUFFER
-     zle clear-screen
+    local tac
+    if which tac > /dev/null; then
+        tac="tac"
+    else
+        tac="tail -r"
+    fi
+    BUFFER=$(\history -n 1 | eval $tac | fzf --query "$LBUFFER")
+    CURSOR=$#BUFFER
+#    zle clear-screen
 }
 zle -N fzf-select-history
 bindkey '^R' fzf-select-history
+
+function fzf-git-switch() {
+    local target_br=$(
+        git branch -a |
+        fzf --exit-0 --layout=reverse --info=hidden --no-multi --preview-window=right --prompt="CHECKOUT BRANCH > " --preview="echo {} | tr -d ' *' | xargs git lgn --color=always" |
+        head -n 1 |
+        perl -pe "s/\s//g; s/\*//g; s/remotes\/origin\///g"
+    )
+    if [ -n "$target_br" ]; then
+        BUFFER="git switch $target_br"
+        zle accept-line
+    fi
+#    zle clear-screen
+}
+zle -N fzf-git-switch
+bindkey "^g" fzf-git-switch
 
 # プロセスをインクリメンタルサーチしてkillする
 function fzf-pkill() {
