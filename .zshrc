@@ -379,7 +379,7 @@ function fzf-fileOpen() {
                         || ( echo "'$1' is not directory!" && exit 1 )
                 query=$2
     fi
-    selected_files=`fzf --query="$query" --multi --select-1 --preview "head -n 100 {}"`
+    selected_files=`fzf --query="$query" --multi --select-1 --preview 'bat --color=always {} ' --preview-window=right,+3`
     [ -n "$selected_files" ] && nvim `echo "$selected_files" | tr '\n' ' '`
 }
 alias ffo="fzf-fileOpen"
