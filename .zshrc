@@ -26,6 +26,7 @@ export DIRCOLORTHEME='dircolors.ansi-light'
 # Ctrl + s を無効化
 stty stop undef
 
+export EDITOR=nvim
 
 # -----------------------------------------------------------------------------
 # Source Prezto.
@@ -324,39 +325,118 @@ fi
 # -----------------------------------------------------------------------------
 # peco
 # -----------------------------------------------------------------------------
-function peco-cdr() {
-    local selected_dir=$(cdr -l | awk '{ print $2 }' | peco)
+#function peco-cdr() {
+#    local selected_dir=$(cdr -l | awk '{ print $2 }' | peco)
+#    if [ -n "$selected_dir" ]; then
+#        BUFFER="cd ${selected_dir}"
+#        zle accept-line
+#    fi
+#    zle clear-screen
+#}
+#zle -N peco-cdr
+#bindkey '^E' peco-cdr
+#
+#function peco-select-history() {
+#     local tac
+#     if which tac > /dev/null; then
+#         tac="tac"
+#     else
+#         tac="tail -r"
+#     fi
+#     BUFFER=$(\history -n 1 | eval $tac | peco --query "$LBUFFER")
+#     CURSOR=$#BUFFER
+#     zle clear-screen
+#}
+#zle -N peco-select-history
+#bindkey '^R' peco-select-history
+#
+#function peco-pkill() {
+#    for pid in `ps aux | peco | awk '{ print $2 }'`
+#    do
+#        kill $pid
+#        echo "Killed ${pid}"
+#    done
+#}
+#alias pk="peco-pkill"
+
+# -----------------------------------------------------------------------------
+# fzf
+# -----------------------------------------------------------------------------
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export PATH="$PATH:$HOME/.fzf/bin"
+export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
+export FZF_DEFAULT_OPTS='--height 50% --border'
+export FZF_TMUX=1
+export FZF_TMUX_OPTS="-p 80%"
+
+alias ff="fzf"
+
+# カレントディレクトリ以下のファイルをインクリメンタルサーチして開く
+function fzf-fileOpen() {
+    query=$1
+    if [ $# -eq 2 ]; then
+            [ -d "$1" ] && cd "$1" \
+                        || ( echo "'$1' is not directory!" && exit 1 )
+                query=$2
+    fi
+    selected_files=`fzf --query="$query" --multi --select-1 --preview "head -n 100 {}"`
+    [ -n "$selected_files" ] && nvim `echo "$selected_files" | tr '\n' ' '`
+}
+alias ffo="fzf-fileOpen"
+
+# カレントディレクトリ以下のディレクトリをインクリメンタルサーチしてcdする
+function fzf-cd() {
+  local dir
+  dir=$(find ${1:-.} -path '*/\.*' -prune \
+                  -o -type d -print 2> /dev/null | fzf +m) &&
+  cd "$dir"
+}
+alias ffd="fzf-cd"
+
+# カレントディレクトリ以下のファイルをGrepして開く
+function fzf-rg() {
+  grep_cmd="rg --hidden --no-ignore --line-number --no-heading --invert-match '^\s*$' 2>/dev/null"
+  read -r file line <<<"$(eval $grep_cmd | fzf --select-1 --exit-0 --delimiter : --preview 'bat --color=always {1} ' --preview-window=right,+{2}+3 | awk -F: '{print $1, $2}')"
+  [ -n "$file" ] && nvim `echo "$file" | tr '\n' ' '`
+}
+alias ffg="fzf-rg"
+
+# cdrをインクリメンタルサーチしてcdする
+function fzf-cdr() {
+    local selected_dir=$(cdr -l | awk '{ print $2 }' | fzf)
     if [ -n "$selected_dir" ]; then
         BUFFER="cd ${selected_dir}"
         zle accept-line
     fi
     zle clear-screen
 }
-zle -N peco-cdr
-bindkey '^E' peco-cdr
+zle -N fzf-cdr
+bindkey '^E' fzf-cdr
 
-function peco-select-history() {
+# historyをインクリメンタルサーチして表示する
+function fzf-select-history() {
      local tac
      if which tac > /dev/null; then
          tac="tac"
      else
          tac="tail -r"
      fi
-     BUFFER=$(\history -n 1 | eval $tac | peco --query "$LBUFFER")
+     BUFFER=$(\history -n 1 | eval $tac | fzf --query "$LBUFFER")
      CURSOR=$#BUFFER
      zle clear-screen
 }
-zle -N peco-select-history
-bindkey '^R' peco-select-history
+zle -N fzf-select-history
+bindkey '^R' fzf-select-history
 
-function peco-pkill() {
-    for pid in `ps aux | peco | awk '{ print $2 }'`
+# プロセスをインクリメンタルサーチしてkillする
+function fzf-pkill() {
+    for pid in `ps aux | fzf | awk '{ print $2 }'`
     do
         kill $pid
         echo "Killed ${pid}"
     done
 }
-alias pk="peco-pkill"
+alias fk="fzf-pkill"
 
 # -----------------------------------------------------------------------------
 # OS 別の設定
@@ -429,36 +509,4 @@ if [ -e /mnt/c/WINDOWS/System32/wsl.exe ]; then
         done
     fi
 fi
-
-# -----------------------------------------------------------------------------
-# fzf
-# -----------------------------------------------------------------------------
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export PATH="$PATH:$HOME/.fzf/bin"
-export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
-export FZF_DEFAULT_OPTS='--height 40% --border'
-
-alias ff="fzf"
-
-function fzf-fileOpen() {
-    query=$1
-    if [ $# -eq 2 ]; then
-            [ -d "$1" ] && cd "$1" \
-                        || ( echo "'$1' is not directory!" && exit 1 )
-                query=$2
-    fi
-    selected_files=`fzf --query="$query" --multi --select-1 --preview "head -n 100 {}"`
-    [ -n "$selected_files" ] && nvim `echo "$selected_files" | tr '\n' ' '`
-}
-
-alias zo="fzf-fileOpen"
-
-function fzf-cd() {
-  local dir
-  dir=$(find ${1:-.} -path '*/\.*' -prune \
-                  -o -type d -print 2> /dev/null | fzf +m) &&
-  cd "$dir"
-}
-
-alias zd="fzf-cd"
 
