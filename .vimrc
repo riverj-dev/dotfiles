@@ -622,10 +622,10 @@ nnoremap <leader>fs :FzfHistory/<CR>
 nnoremap <leader>fh :FzfHistory<CR>
 nnoremap <leader>fc :FzfHistory:<CR>
 
-set runtimepath+=~/.zplug/bin/fzf
+set runtimepath+=~/fzf/bin
 
 function! FZGrep(query, fullscreen)
-    let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+    let command_fmt = 'rg --column --line-number --no-heading --hidden --no-ignore --glob "!.git/*" --color=always --smart-case -- %s || true'
     let initial_command = printf(command_fmt, shellescape(a:query))
     let reload_command = printf(command_fmt, '{q}')
     let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
@@ -635,7 +635,7 @@ endfunction
 command! -nargs=* -bang RG call FZGrep(<q-args>, <bang>0)
 nnoremap <leader>fg :RG<CR>
 
-let $FZF_DEFAULT_OPTS="--layout=reverse --info=inline"
+let $FZF_DEFAULT_OPTS="-e --reverse --info=inline"
 let g:fzf_layout = {
             \ 'window': {
             \     'width': 0.64,
