@@ -390,7 +390,7 @@ alias ffo="fzf-fileOpen"
 # カレントディレクトリ以下のファイルをGrepしてvimで開く
 function fzf-rg() {
     read -r file line <<<"$(
-        rg --column --line-number --no-heading --hidden --no-ignore --glob '!.git/*' --color=always --smart-case "${@:-^[^\n]}" \
+        rg --column --line-number --no-heading --hidden --no-ignore --glob '!.git/*' --color=always --smart-case "${@:-^[^\n]}" 2> /dev/null \
         | fzf \
             --header='Grep to open file' \
             --no-multi \
@@ -401,7 +401,7 @@ function fzf-rg() {
             --nth 4.. \
             --ansi \
             --preview 'bat --color=always {1} --highlight-line {2}'  \
-            --preview-window=right,+{2}+3  \
+            --preview-window=right,+"{2}-3"  \
             --prompt='Grep word >' \
         | awk -F: '{print $1, $2}'
         )"
