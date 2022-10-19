@@ -371,31 +371,31 @@ export FZF_TMUX_OPTS="-p 80%"
 
 alias ff="fzf"
 
-# カレントディレクトリ以下のファイルをインクリメンタルサーチして開く
+# カレントディレクトリ以下のファイルをインクリメンタルサーチしてvimで開く
 function fzf-fileOpen() {
-    selected_file=`fzf --query='' --multi --select-1 --preview 'bat --color=always {}' --preview-window=right,+3`
-    [ -n "$selected_file" ] && nvim `echo "${selected_file}" | tr '\n' ' '`
+selected_file=`fzf --query='' --multi --select-1 --exit-0 --preview 'bat --color=always {}' --preview-window=right,+3 --prompt='open file (Multiple selections in TAB key) > '` 
+    [ -n "$selected_file" ] && vim `echo "${selected_file}" | tr '\n' ' '`
 }
 alias ffo="fzf-fileOpen"
 
+# カレントディレクトリ以下のファイルをGrepしてvimで開く
+function fzf-rg() {
+    grep_cmd="rg --hidden --no-ignore --line-number --no-heading --invert-match '^\s*$' 2> /dev/null"
+    read -r file line <<<"$(eval $grep_cmd | fzf --no-multi --select-1 --exit-0 --delimiter : --preview 'bat --color=always {1}' --preview-window=right,+{2}+3  --prompt='Grep to open file > ' | awk -F: '{print $1, $2}')"
+    [ -n "$file" ] && vim `echo "$file" +"$line" | tr '\n' ' '`
+}
+alias ffg="fzf-rg"
+
 # カレントディレクトリ以下のディレクトリをインクリメンタルサーチしてcdする
 function fzf-cd() {
-    selected_dir=`find ${1:-.} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf +m`
+selected_dir=`find ${1:-.} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf --no-multi --no-preview --prompt='cd (under the current directory) > '`
     [ -n "$selected_dir" ] && cd `echo "${selected_dir}" | tr '\n' ' '`
 }
 alias ffd="fzf-cd"
 
-# カレントディレクトリ以下のファイルをGrepして開く
-function fzf-rg() {
-    grep_cmd="rg --hidden --no-ignore --line-number --no-heading --invert-match '^\s*$' 2> /dev/null"
-    read -r file line <<<"$(eval $grep_cmd | fzf --select-1 --exit-0 --delimiter : --preview 'bat --color=always {1} ' --preview-window=right,+{2}+3 | awk -F: '{print $1, $2}')"
-    [ -n "$file" ] && nvim `echo "$file" | tr '\n' ' '`
-}
-alias ffg="fzf-rg"
-
 # cdrをインクリメンタルサーチしてcdする
 function fzf-cdr() {
-    selected_dir=`cdr -l | awk '{ print $2 }' | fzf`
+selected_dir=`cdr -l | awk '{ print $2 }' | fzf --no-multi --no-preview --prompt='cd (cdr) > '`
     [ -n "$selected_dir" ] && BUFFER="cd ${selected_dir}"; zle accept-line
 #    zle clear-screen
 }
@@ -410,18 +410,18 @@ function fzf-select-history() {
     else
         tac="tail -r"
     fi
-    BUFFER=`history -n 1 | eval $tac | fzf`
+    BUFFER=`history -n 1 | eval $tac | fzf --no-multi --no-preview --prompt='history > '`
     CURSOR=$#BUFFER
 #    zle clear-screen
 }
 zle -N fzf-select-history
 bindkey '^R' fzf-select-history
 
-# git switchをインクリメンタルサーチして表示する
+# gitのbranchをインクリメンタルサーチして表示する
 function fzf-git-switch() {
     selected_branch=$(
         git branch -a |
-        fzf --exit-0 --info=hidden --no-multi --preview="echo {} | tr -d ' *' | xargs git log --color=always" --preview-window=right --prompt='CHECKOUT BRANCH >'  |
+        fzf --exit-0 --info=hidden --no-multi --preview="echo {} | tr -d ' *' | xargs git log --color=always" --preview-window=right --prompt='git switch > '  |
         head -n 1 |
         perl -pe "s/\s//g; s/\*//g; s/remotes\/origin\///g"
     )
@@ -433,13 +433,13 @@ bindkey "^g" fzf-git-switch
 
 # プロセスをインクリメンタルサーチしてkillする
 function fzf-pkill() {
-    for pid in `ps aux | fzf | awk '{ print $2 }'`
+    for pid in `ps aux | fzf --no-multi --no-preview --prompt='Kill process > ' | awk '{ print $2 }'`
     do
         kill $pid
         echo "Killed ${pid}"
     done
 }
-alias fk="fzf-pkill"
+alias ffk="fzf-pkill"
 
 # -----------------------------------------------------------------------------
 # OS 別の設定
