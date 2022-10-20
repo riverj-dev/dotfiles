@@ -376,21 +376,31 @@ alias ff="fzf"
 
 # カレントディレクトリ以下のファイルをインクリメンタルサーチしてvimで開く
 function fzf-fileOpen() {
-    selected_file=`fzf \
-        --header='Open file (Multiple selections in TAB key) ' \
-        --multi \
-        --select-1 \
-        --exit-0 \
-        --preview 'bat --color=always {}' \
-        --preview-window=right,+3 --prompt='Search word >'` 
+    selected_file=$(
+        fzf \
+            --header='Open file (Multiple selections in TAB key) ' \
+            --multi \
+            --select-1 \
+            --exit-0 \
+            --preview 'bat --color=always {}' \
+            --preview-window=right,+3 --prompt='Search word >'
+    )
     [ -n "$selected_file" ] && vim `echo "${selected_file}" | tr '\n' ' '`
 }
 alias ffo="fzf-fileOpen"
 
-# カレントディレクトリ以下のファイルをGrepしてvimで開く
+# カレントディレクトリ以下のファイルをRipGrepしてvimで開く
 function fzf-rg() {
-    read -r file line <<<"$(
-        rg --column --line-number --no-heading --hidden --no-ignore --glob '!.git/*' --color=always --smart-case "${@:-^[^\n]}" 2> /dev/null \
+    read -r file line <<<$(
+        rg \
+            --column \
+            --line-number \
+            --no-heading \
+            --hidden \
+            --no-ignore \
+            --glob '!.git/*' \
+            --color=always \
+            --smart-case "${@:-^[^\n]}" 2> /dev/null \
         | fzf \
             --header='Grep to open file' \
             --no-multi \
@@ -404,29 +414,34 @@ function fzf-rg() {
             --preview-window=right,+"{2}-3"  \
             --prompt='Grep word >' \
         | awk -F: '{print $1, $2}'
-        )"
+    )
     [ -n "$file" ] && vim `echo "$file" +"$line" | tr '\n' ' '`
 }
 alias ffg="fzf-rg"
 
 # カレントディレクトリ以下のディレクトリをインクリメンタルサーチしてcdする
 function fzf-cd() {
-    selected_dir=`find ${1:-.} -path '*/\.*' -prune -o -type d -print 2> /dev/null \
+    selected_dir=$(
+        find ${1:-.} -path '*/\.*' -prune -o -type d -print 2> /dev/null \
         | fzf \
             --header='cd (under the current directory)' \
             --no-multi \
-            --no-preview --prompt='Search word >'`
-    [ -n "$selected_dir" ] && cd `echo "${selected_dir}" | tr '\n' ' '`
+            --no-preview --prompt='Search word >'
+    )
+    [ -n "$selected_dir" ] && eval cd `echo "${selected_dir:q}" | tr '\n' ' '`
 }
 alias ffd="fzf-cd"
 
 # cdrをインクリメンタルサーチしてcdする
 function fzf-cdr() {
-    selected_dir=`cdr -l | awk '{ print $2 }' | fzf \
-        --header='cd history' \
-        --no-multi \
-        --no-preview \
-        --prompt='Search word >'`
+    selected_dir=$(
+        cdr -l | awk '{ print $2 }' \
+        | fzf \
+            --header='cd history' \
+            --no-multi \
+            --no-preview \
+            --prompt='Search word >'
+    )
     [ -n "$selected_dir" ] && BUFFER="cd ${selected_dir}"; zle accept-line
 #    zle clear-screen
 }
@@ -441,7 +456,7 @@ function fzf-select-history() {
     else
         tac="tail -r"
     fi
-    BUFFER=`history -n 1 | eval $tac | fzf --header='command history' --no-multi --no-preview --prompt='Search word >'`
+    BUFFER=$(history -n 1 | eval $tac | fzf --header='command history' --no-multi --no-preview --prompt='Search word >')
     CURSOR=$#BUFFER
 #    zle clear-screen
 }
@@ -451,10 +466,17 @@ bindkey '^R' fzf-select-history
 # gitのbranchをインクリメンタルサーチして表示する
 function fzf-git-switch() {
     selected_branch=$(
-        git branch -a |
-        fzf --header='git switch' --exit-0 --info=hidden --no-multi --preview="echo {} | tr -d ' *' | xargs git log --color=always" --preview-window=right --prompt='Search word >'  |
-        head -n 1 |
-        perl -pe "s/\s//g; s/\*//g; s/remotes\/origin\///g"
+        git branch -a \
+        | fzf \
+            --header='git switch' \
+            --exit-0 \
+            --info=hidden \
+            --no-multi \
+            --preview="echo {} | tr -d ' *' | xargs git log --color=always" \
+            --preview-window=right \
+            --prompt='Search word >'  \
+        | head -n 1 \
+        | perl -pe "s/\s//g; s/\*//g; s/remotes\/origin\///g"
     )
     [ -n "$selected_branch" ] && BUFFER="git switch $selected_branch";
 #    zle clear-screen
