@@ -163,22 +163,15 @@ nnoremap sk <C-w>k
 " 右に移動
 nnoremap sl <C-w>l
 
-"タブ操作
+" タブ操作
 " 新規タブ
 nnoremap st :<C-u>tabnew<CR>
 " 次のタブに切替
 nnoremap sn gt
-" 水前のタブに切替平分割
+" 前のタブに切替
 nnoremap sp gT
 " タブ移動（前のタブ）
 nnoremap gr :tabprevious<CR>
-
-" NERDTreeのキーマップを変更
-augroup myvimrc
-    autocmd!
-augroup END
-autocmd myvimrc filetype nerdtree nnoremap sh <C-w>h
-autocmd myvimrc filetype nerdtree nnoremap sl <C-w>l
 
 " -----------------------------------------------------------------------------
 " キーバインド（インサートモード）
@@ -275,7 +268,6 @@ if ((has('nvim') || has('timers') || v:version >= 800) && has('python3'))
         call dein#add('simeji/winresizer')
         call dein#add('vim-scripts/taglist.vim')
         call dein#add('unblevable/quick-scope')
-"        call dein#add('rhysd/clever-f.vim')
         call dein#add('easymotion/vim-easymotion')
         call dein#add('ConradIrwin/vim-bracketed-paste')
         call dein#add('elzr/vim-json')
@@ -286,12 +278,13 @@ if ((has('nvim') || has('timers') || v:version >= 800) && has('python3'))
         call dein#add('jremmen/vim-ripgrep')
         call dein#add('tpope/vim-fugitive')
         call dein#add('voldikss/vim-floaterm')
+        call dein#add('lambdalisue/fern.vim')
+        call dein#add('lambdalisue/fern-git-status.vim')
 
         call dein#add('neoclide/coc.nvim', { 'merged': 0, 'rev': 'release' })
 
+"        call dein#add('rhysd/clever-f.vim')
 "        call dein#add('ctrlpvim/ctrlp.vim')
-        call dein#add('preservim/nerdtree')
-        call dein#add('jistr/vim-nerdtree-tabs')
 
         " color scheme
         call dein#load_toml(s:toml_file)
@@ -469,7 +462,7 @@ else
     NeoBundle 'bronson/vim-trailing-whitespace'
     NeoBundle 'tpope/vim-surround'
     NeoBundle 'ujihisa/unite-colorscheme'
-    NeoBundle 'scrooloose/nerdtree'
+    NeoBundle 'lambdalisue/fern.vim'
     NeoBundle 'kana/vim-operator-user'
     NeoBundle 'kana/vim-operator-replace'
     NeoBundle 'machakann/vim-highlightedyank'
@@ -478,7 +471,6 @@ else
     NeoBundle 'easymotion/vim-easymotion'
     NeoBundle 'ConradIrwin/vim-bracketed-paste'
     NeoBundle 'elzr/vim-json'
-    NeoBundle 'jistr/vim-nerdtree-tabs'
     NeoBundle 'szw/vim-tags'
     NeoBundle 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
     NeoBundle 'junegunn/fzf.vim'
@@ -553,23 +545,6 @@ let g:lightline = {
 " indentLine用設定
 let g:indentLine_color_gui='#ffffff'
 
-" NERDTree用設定
-" 隠しファイルをデフォルトで表示
-let NERDTreeShowHidden=1
-" 横幅を設定
-let NERDTreeWinSize=36
-" Space-n NERDTreeの表示
-nmap <leader>n <plug>NERDTreeTabsToggle<CR>
-
-" 他のバッファをすべて閉じた時にNERDTreeが開いていたらNERDTreeも一緒に閉じる。
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
-" vim-nerdtree-tabs用設定
-let g:nerdtree_tabs_open_on_console_startup=1
-lef g:nerdtree_tabs_synchronize_view=0
-lef g:nerdtree_tabs_synchronize_focus=1
-let g:nerdtree_tabs_startup_cd=0
-let g:nerdtree_tabs_autofind=1
 
 " vim-highlightedyank用設定
 let g:highlightedyank_highlight_duration=250
@@ -617,9 +592,13 @@ let g:EasyMotion_space_jump_first=1
 let g:fzf_command_prefix = 'Fzf'
 nnoremap <leader>fb :FzfBuffers<CR>
 " nnoremap <leader>fg :FzfRg<Space>
-nnoremap <leader>ff :FzfFiles<CR>
+" File Open(under the current directory)
+nnoremap <leader>fo :FzfFiles<CR>
+" Search History
 nnoremap <leader>fs :FzfHistory/<CR>
+" File History
 nnoremap <leader>fh :FzfHistory<CR>
+" Command History
 nnoremap <leader>fc :FzfHistory:<CR>
 
 set runtimepath+=~/fzf/bin
@@ -633,6 +612,7 @@ function! FZGrep(query, fullscreen)
 endfunction
 
 command! -nargs=* -bang RG call FZGrep(<q-args>, <bang>0)
+" File Open(under the current directory and grep)
 nnoremap <leader>fg :RG<CR>
 
 let $FZF_DEFAULT_OPTS="-e --reverse --info=inline"
@@ -678,6 +658,42 @@ nnoremap <leader>jp :FloatermPrev<CR>
 tnoremap <leader>jp <C-\><C-n>:FloatermPrev<CR>
 nnoremap <leader>jn :FloatermNext<CR>
 tnoremap <leader>jn <C-\><C-n>:FloatermNext<CR>
+
+" fern用設定
+" 隠しファイルを表示する
+let g:fern#default_hidden=1
+
+nnoremap <leader>n :Fern . -stay -reveal=% -drawer -toggle -width=40<CR>
+function! s:init_fern() abort
+
+    nmap <buffer><expr>
+        \ <Plug>(fern-my-expand-or-collapse)
+        \ fern#smart#leaf(
+        \   "\<Plug>(fern-action-collapse)",
+        \   "\<Plug>(fern-action-expand)",
+        \   "\<Plug>(fern-action-collapse)",
+        \ )
+    nmap <buffer><nowait> l <Plug>(fern-my-expand-or-collapse)
+
+    nmap <buffer><expr>
+        \ <Plug>(fern-my-open-expand-collapse)
+        \ fern#smart#leaf(
+        \   "\<Plug>(fern-action-open:select)",
+        \   "\<Plug>(fern-action-expand)",
+        \   "\<Plug>(fern-action-collapse)",
+        \ )
+    nmap <buffer> <CR> <Plug>(fern-my-open-expand-collapse)
+
+endfunction
+
+augroup my-fern-custom
+    autocmd! *
+    autocmd FileType fern call s:init_fern()
+augroup END
+
+augroup my-fern-startup
+    autocmd VimEnter * ++nested Fern . -stay -reveal=% -drawer -toggle -width=40
+augroup END
 
 " clever-f用設定
 "" 行を跨いで検索しない
