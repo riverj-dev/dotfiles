@@ -18,8 +18,8 @@ export XDG_DATA_HOME=$HOME/.local/share
 export XDG_STATE_HOME=$HOME/.local/state
 
 # Java Directories
-# export JAVA_HOME=`echo $(dirname $(readlink $(readlink $(which java)))) | sed -e 's/\/bin$//g' | sed -e 's/\/jre$//g'`
-# export JDK_HOME=`echo $(dirname $(readlink $(readlink $(which java)))) | sed -e 's/\/bin$//g' | sed -e 's/\/jre$//g'`
+export JAVA_HOME=`echo $(dirname $(readlink $(readlink $(which java)))) | sed -e 's/\/bin$//g' | sed -e 's/\/jre$//g'`
+export JDK_HOME=`echo $(dirname $(readlink $(readlink $(which java)))) | sed -e 's/\/bin$//g' | sed -e 's/\/jre$//g'`
 
 # 補完候補にls --colorsと同じ色をつける
 export DIRCOLORTHEME='dircolors.ansi-light'
@@ -324,43 +324,6 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 if type "yarn" > /dev/null 2>&1; then
     export PATH="$PATH:`yarn global bin`"
 fi
-
-# -----------------------------------------------------------------------------
-# peco
-# -----------------------------------------------------------------------------
-#function peco-cdr() {
-#    local selected_dir=$(cdr -l | awk '{ print $2 }' | peco)
-#    if [ -n "$selected_dir" ]; then
-#        BUFFER="cd ${selected_dir}"
-#        zle accept-line
-#    fi
-#    zle clear-screen
-#}
-#zle -N peco-cdr
-#bindkey '^E' peco-cdr
-#
-#function peco-select-history() {
-#     local tac
-#     if which tac > /dev/null; then
-#         tac="tac"
-#     else
-#         tac="tail -r"
-#     fi
-#     BUFFER=$(\history -n 1 | eval $tac | peco --query "$LBUFFER")
-#     CURSOR=$#BUFFER
-#     zle clear-screen
-#}
-#zle -N peco-select-history
-#bindkey '^R' peco-select-history
-#
-#function peco-pkill() {
-#    for pid in `ps aux | peco | awk '{ print $2 }'`
-#    do
-#        kill $pid
-#        echo "Killed ${pid}"
-#    done
-#}
-#alias pk="peco-pkill"
 
 # -----------------------------------------------------------------------------
 # fzf

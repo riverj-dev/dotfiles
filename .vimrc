@@ -71,7 +71,7 @@ set scrolloff=10
 set pumheight=10
 
 " -----------------------------------------------------------------------------
-" タブ文c設定
+" タブ文字設定
 " -----------------------------------------------------------------------------
 " タブ文字を半角スペースにする
 set expandtab
@@ -136,6 +136,10 @@ nnoremap <silent> <leader>r :%s///g<Left><Left><Left>
 nnoremap <silent> <leader><leader> "zyiw:let @/='\<' . @z . '\>'<CR>:set hlsearch<CR>
 " カーソル下の単語をハイライトしてから置換する
 nmap # <Space><Space> :%s/<C-r>///g<Left><Left>
+" カーソル位置を元に戻す
+noremap <leader>o <C-O>
+" カーソル位置を進む
+noremap <leader>i <C-I>
 
 " -----------------------------------------------------------------------------
 " キーバインド（ウィンドウ（ペイン）操作）
@@ -234,19 +238,17 @@ if ((has('nvim') || has('timers') || v:version >= 800) && has('python3'))
 
         call dein#begin(s:dein_dir)
 
+        " dein 
         call dein#add('Shougo/dein.vim')
-        call dein#add('Shougo/neomru.vim')
-        call dein#add('Shougo/neoyank.vim')
 
         " denite
         call dein#add('Shougo/denite.nvim')
-        " defx
-"        call dein#add('Shougo/defx.nvim')
+        call dein#add('Shougo/neomru.vim')
+        call dein#add('Shougo/neoyank.vim')
 
         " deoplete
         if ((has('nvim') || has('timers')) && has('python3')) && system('pip3 show neovim') !=# ''
-"            call dein#add('Shougo/deoplete.nvim')
-            call dein#add('Shougo/neocomplete.vim')
+            call dein#add('Shougo/deoplete.nvim')
         elseif has('lua')
             call dein#add('Shougo/neocomplete.vim')
         endif
@@ -306,78 +308,38 @@ if ((has('nvim') || has('timers') || v:version >= 800) && has('python3'))
     " }}}
 
     " -----------------------------------------------------------------------------
-    " キーバインド（Plugin周り）
+    " denite: <leader>dX
+    "
+    "   <leader>db  バッファとカレントディレクトリのファイル
+    "   <leader>df  カレントディレクトリ以下のファイル
+    "   <leader>dg  カレントディレクトリ以下のファイルをGrep
+    "   <leader>d,  カレントディレクトリ以下のファイルからカーソル下の文字列でGrep
+    "   <leader>dgs grepした結果を再表示
+    "   <leader>dc  コマンド履歴
+    "   <leader>dh  最近開いたファイルを表示
+    "   <leader>dr  レジストリを表示
+    "
+    "   o           open file
+    "   t           open file in New Tab
+    "   s           open files/buffers in split windows (horizonal)
+    "   v           open files/buffers in split windows (vertical)
+    "   p           open files/buffers in preview
+    "   d           delete file
+    "   i           filter by string
+    "   <Space>     select multiple files/buffers
+    "   <ESC>       close denite window
+    "   <C-{>       close denite window
+    "   q           close denite window
     " -----------------------------------------------------------------------------
-    " Space-n defxの表示
-"    nnoremap <silent> <leader>n :<C-u>Defx `escape(expand('%:p:h'), ' :')` -search=`expand('%:p')` <CR>
-
-"    call defx#custom#option('_', {
-"                \ 'winwidth': 40,
-"                \ 'split': 'vertical',
-"                \ 'direction': 'topleft',
-"                \ 'show_ignored_files': 1,
-"                \ 'auto_cd':1,
-"                \ 'focus':0,
-"                \ 'toggle': 1,
-"                \ 'resume': 1,
-"                \ })
-"
-"    autocmd FileType defx call s:defx_my_settings()
-"
-"    function! s:defx_my_settings() abort
-"        nnoremap <silent><buffer><expr> <CR>
-"                    \ defx#is_directory() ? 
-"                    \ defx#is_opened_tree() ? defx#do_action('close_tree') : defx#do_action('open_tree') :
-"                    \ defx#do_action('multi', [['open', 'tab drop'], 'drop'])
-"        nnoremap <silent><buffer><expr> o
-"                    \ defx#is_directory() ? 
-"                    \ defx#is_opened_tree() ? defx#do_action('close_tree') : defx#do_action('open_tree') :
-"                    \ defx#do_action('multi', [['open', 'tab drop'], 'drop'])
-"        nnoremap <silent><buffer><expr> q
-"                    \ defx#do_action('quit')
-"        nnoremap <silent><buffer><expr> ..
-"                    \ defx#do_action('cd', ['..'])
-"        nnoremap <silent><buffer><expr><nowait> t
-"                    \ defx#do_action('multi', [['open', 'tab drop'], 'drop'])
-"        nnoremap <silent><buffer><expr> c
-"                    \ defx#do_action('copy')
-"        nnoremap <silent><buffer><expr> p
-"                    \ defx#do_action('paste')
-"        nnoremap <silent><buffer><expr> d
-"                    \ defx#do_action('remove')
-"        nnoremap <silent><buffer><expr> r
-"                    \ defx#do_action('rename')
-"        nnoremap <silent><buffer><expr> m
-"                    \ defx#do_action('move')
-"        nnoremap <silent><buffer><expr> n
-"                    \ defx#do_action('new_file')
-"        nnoremap <silent><buffer><expr> N
-"                    \ defx#do_action('new_directory')
-"        nnoremap <silent><buffer><expr> yy
-"                    \ defx#do_action('yank_path')
-"    endfunction
-
-    " <leader>-uX Denite用キーバインド
-    " カレントディレクトリとバッファを表示
-    nnoremap <silent><leader>ud  :<C-u>Denite file buffer <CR>
-    " バッファを表示
-    nnoremap <silent><leader>ub   :<C-u>Denite buffer <CR>
-    " カレントディレクトリ以下を再帰的に表示
-    nnoremap <silent><leader>uf  :<C-u>Denite file/rec <CR>
-    " カレントディレクトリ以下のファイルから指定した文字列を検索
-    nnoremap <silent><leader>ug  :<C-u>Denite grep -buffer-name=search<CR>
-    " カレントディレクトリ以下のファイルからカーソル下の文字列を検索
-    nnoremap <silent><leader>u,   :<C-u>DeniteCursorWord grep -buffer-name=search line<CR>
-    " grepした結果を再表示
-    nnoremap <silent><leader>ugs  :<C-u>Denite -resume -buffer-name=search<CR>
-    " Neovim内で実行したコマンドを表示
-    nnoremap <silent><leader>uc   :<C-u>Denite command_history<CR>
-    " 最近開いたファイルを表示
-    nnoremap <silent><leader>uh   :<C-u>Denite file_mru buffer<CR>
-    " レジストリを表示
-    nnoremap <silent><leader>ur   :<C-u>Denite register<CR>
-    " マークを表示
-    nnoremap <silent><leader>um   :<C-u>Denite mark<CR>
+    nnoremap <silent><leader>db     :<C-u>Denite file buffer file:new <CR>
+    nnoremap <silent><leader>df     :<C-u>Denite file/rec <CR>
+    nnoremap <silent><leader>dg     :<C-u>Denite grep -buffer-name=search<CR>
+    nnoremap <silent><leader>d,     :<C-u>DeniteCursorWord grep -buffer-name=search line<CR>
+    nnoremap <silent><leader>dgs    :<C-u>Denite -resume -buffer-name=search<CR>
+    nnoremap <silent><leader>dc     :<C-u>Denite command_history<CR>
+    nnoremap <silent><leader>dh     :<C-u>Denite file_mru buffer<CR>
+    nnoremap <silent><leader>dr     :<C-u>Denite register<CR>
+    nnoremap <silent><leader>dm     :<C-u>Denite mark<CR>
 
     augroup NormalFloatBG
         autocmd!
@@ -388,26 +350,17 @@ if ((has('nvim') || has('timers') || v:version >= 800) && has('python3'))
 
     autocmd FileType denite call s:denite_my_settings()
     function! s:denite_my_settings() abort
-        nnoremap <silent><buffer><expr> <CR> denite#do_map('do_action')
-        " 【o】 ファイルを開く
-        nnoremap <silent><buffer><expr> o denite#do_map('do_action')
-        " 【t】 ファイルをタブで開く
-        nnoremap <silent><buffer><expr> t denite#do_map('do_action', 'tabopen')
-        " 【s】 ウィンドウを水平分割してファイルを開く
-        nnoremap <silent><buffer><expr> s denite#do_map('do_action', 'split')
-        " 【v】 ウィンドウを垂直分割してファイルを開く
-        nnoremap <silent><buffer><expr> v denite#do_map('do_action', 'vsplit')
-        " 【d】 ファイルを削除する
-        nnoremap <silent><buffer><expr> d denite#do_map('do_action', 'delete')
-        " 【p】 ファイルをプレビュー画面で開く
-        nnoremap <silent><buffer><expr> p denite#do_map('do_action', 'preview')
-        " 【ESC】 / 【q】 denite.nvimを終了する
-        nnoremap <silent><buffer><expr> <Esc> denite#do_map('quit')
-        nnoremap <silent><buffer><expr> <C-[> denite#do_map('quit')
-        nnoremap <silent><buffer><expr> q     denite#do_map('quit')
-        " 【i】 ファイル名で検索する
-        nnoremap <silent><buffer><expr> i  denite#do_map('open_filter_buffer')
-        " 【SPACE】 ファイルを複数選択する
+        nnoremap <silent><buffer><expr> <CR>    denite#do_map('do_action')
+        nnoremap <silent><buffer><expr> o       denite#do_map('do_action')
+        nnoremap <silent><buffer><expr> t       denite#do_map('do_action', 'tabopen')
+        nnoremap <silent><buffer><expr> s       denite#do_map('do_action', 'split')
+        nnoremap <silent><buffer><expr> v       denite#do_map('do_action', 'vsplit')
+        nnoremap <silent><buffer><expr> d       denite#do_map('do_action', 'delete')
+        nnoremap <silent><buffer><expr> p       denite#do_map('do_action', 'preview')
+        nnoremap <silent><buffer><expr> <Esc>   denite#do_map('quit')
+        nnoremap <silent><buffer><expr> <C-[>   denite#do_map('quit')
+        nnoremap <silent><buffer><expr> q       denite#do_map('quit')
+        nnoremap <silent><buffer><expr> i       denite#do_map('open_filter_buffer')
         nnoremap <silent><buffer><expr> <Space> denite#do_map('toggle_select').'j'
     endfunction
 
@@ -485,7 +438,6 @@ else
     " 設定終了
     call neobundle#end()
 
-    " leader-uX Unite用キーバインド
     " カレントディレクトリとバッファを表示
     nnoremap <silent><leader>ufb  :<C-u>Unite file buffer <CR>
     " バッファを表示
@@ -523,6 +475,15 @@ map  <leader>k <Plug>(easymotion-k)
 nmap <leader>s <Plug>(easymotion-s2)
 xmap <leader>s <Plug>(easymotion-s2)
 
+" easy motion用設定
+let g:EasyMotion_do_mapping=0
+let g:EasyMotion_smartcase=1
+let g:EasyMotion_startofline=0
+let g:EasyMotion_keys='ABCDEGHIJKLMNOPQRSTUVWXYZ,.;1234567890F'
+let g:EasyMotion_use_upper=1
+let g:EasyMotion_enter_jump_first=1
+let g:EasyMotion_space_jump_first=1
+
 " ヤンクした文字列をハイライトする
 if !exists('##TextYankPost')
     map y <Plug>(highlightedyank)
@@ -544,7 +505,6 @@ let g:lightline = {
 
 " indentLine用設定
 let g:indentLine_color_gui='#ffffff'
-
 
 " vim-highlightedyank用設定
 let g:highlightedyank_highlight_duration=250
@@ -579,14 +539,6 @@ inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
 " nmap <silent> gi <Plug>(coc-implementation)
 " nmap <silent> gr <Plug>(coc-references)
 
-" easy motion用設定
-let g:EasyMotion_do_mapping=0
-let g:EasyMotion_smartcase=1
-let g:EasyMotion_startofline=0
-let g:EasyMotion_keys='ABCDEGHIJKLMNOPQRSTUVWXYZ,.;1234567890F'
-let g:EasyMotion_use_upper=1
-let g:EasyMotion_enter_jump_first=1
-let g:EasyMotion_space_jump_first=1
 
 " fzf用設定
 let g:fzf_command_prefix = 'Fzf'
