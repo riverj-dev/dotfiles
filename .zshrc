@@ -18,8 +18,10 @@ export XDG_DATA_HOME=$HOME/.local/share
 export XDG_STATE_HOME=$HOME/.local/state
 
 # Java Directories
-export JAVA_HOME=`echo $(dirname $(readlink $(readlink $(which java)))) | sed -e 's/\/bin$//g' | sed -e 's/\/jre$//g'`
-export JDK_HOME=`echo $(dirname $(readlink $(readlink $(which java)))) | sed -e 's/\/bin$//g' | sed -e 's/\/jre$//g'`
+#export JAVA_HOME=`echo $(dirname $(readlink $(readlink $(which java)))) | sed -e 's/\/bin$//g' | sed -e 's/\/jre$//g'`
+#export JDK_HOME=`echo $(dirname $(readlink $(readlink $(which java)))) | sed -e 's/\/bin$//g' | sed -e 's/\/jre$//g'`
+export JAVA_HOME=$(echo $(java -XshowSettings:properties -version 2>&1 > /dev/null | grep 'java.home') | sed -E 's/.*= +//g')
+export JDK_HOME=$(echo $(java -XshowSettings:properties -version 2>&1 > /dev/null | grep 'java.home') | sed -E 's/.*= +//g')
 
 # 補完候補にls --colorsと同じ色をつける
 export DIRCOLORTHEME='dircolors.ansi-light'
