@@ -395,7 +395,7 @@ else
     " neobunle.vim がなければ git clone
     if &runtimepath !~# '/neobundle.vim'
         if !isdirectory(s:neobundle_dir)
-            execute '!git clone git://github.com/Shougo/neobundle.vim' s:neobundle_repo_dir
+            execute '!git clone https://github.com/Shougo/neobundle.vim.git' s:neobundle_repo_dir
         endif
         execute 'set runtimepath^=' . fnamemodify(s:neobundle_repo_dir, ':p')
     endif
@@ -415,7 +415,7 @@ else
     NeoBundle 'bronson/vim-trailing-whitespace'
     NeoBundle 'tpope/vim-surround'
     NeoBundle 'ujihisa/unite-colorscheme'
-    NeoBundle 'lambdalisue/fern.vim'
+    NeoBundle 'lambdalisue/fern.vim' , 'main'
     NeoBundle 'kana/vim-operator-user'
     NeoBundle 'kana/vim-operator-replace'
     NeoBundle 'machakann/vim-highlightedyank'
