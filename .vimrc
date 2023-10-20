@@ -19,6 +19,10 @@ set nobackup
 set noswapfile
 " 編集中のファイルが変更されたら自動で読み直す
 set autoread
+" バッファを変更可能とする
+set modifiable
+" ファイルの書き込み可能とする 
+set write
 " バッファが編集中でもその他のファイルを開けるように
 set hidden
 " 入力中のコマンドをステータスに表示する
@@ -29,14 +33,18 @@ set mouse=a
 set clipboard^=unnamedplus
 " 256色対応
 set t_Co=256
-" Remove all vimrc autocommands
-augroup vimrc
-    autocmd!
-augroup END
-" インサートモードに入る時に自動でコメントアウトされないようにする
-autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 " leader をスペースに割当て
 let mapleader = "\<Space>"
+" ファイルタイプ別のVimプラグイン/インデントを有効にする
+filetype plugin indent on
+" オートコマンド初期化
+augroup vimrc
+    autocmd!
+    " インサートモードに入る時に自動でコメントアウトされないようにする
+    autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+    " QuickFixのみの場合自動で閉じる
+    autocmd WinEnter * if (winnr('$') == 1) && (getbufvar(winbufnr(0), '&buftype')) == 'quickfix' | quit | endif
+augroup END
 
 " -----------------------------------------------------------------------------
 " 画面表示設定
@@ -95,10 +103,8 @@ set incsearch
 set wrapscan
 " 検索語をハイライト表示
 set hlsearch
-" vim grepすると自動的にあたらしいウィンドウで検索結果一覧を表示する
+" vimgrepすると自動的にあたらしいウィンドウで検索結果一覧を表示する
 autocmd QuickFixCmdPost *grep* cwindow
-set modifiable
-set write
 
 " -----------------------------------------------------------------------------
 " キーバインド（ノーマルモード）
@@ -144,28 +150,21 @@ noremap <leader>i <C-I>
 " -----------------------------------------------------------------------------
 " キーバインド（ウィンドウ（ペイン）操作）
 " -----------------------------------------------------------------------------
+" ウィンドウ操作
 " ウィンドウ間移動
 nnoremap <left>   <C-w>h
 nnoremap <right>  <C-w>l
 nnoremap <up>     <C-w>k
 nnoremap <down>   <C-w>j
-
-" 水平分割
+" ウィンドウ水平分割
 nnoremap ss :<C-u>sp<CR>
-" 垂直分割
+" ウィンドウ垂直分割
 nnoremap sv :<C-u>vs<CR>
 " ウィンドウを閉じる
 nnoremap sq :<C-u>q<CR>
+
 " バッファを閉じる
 nnoremap sQ :<C-u>bd<CR>
-" 左に移動
-nnoremap sh <C-w>h
-" 下に移動
-nnoremap sj <C-w>j
-" 上に移動
-nnoremap sk <C-w>k
-" 右に移動
-nnoremap sl <C-w>l
 
 " タブ操作
 " 新規タブ
@@ -185,7 +184,7 @@ inoremap <silent> jj <ESC>
 " 日本語入力時のjjでエスケープ
 inoremap <silent> ｊｊ <ESC>
 inoremap <silent> っｊ <ESC>
-" 入力モードでのカーソル移動
+" インサートモードでのカーソル移動
 inoremap <C-j> <Down>
 inoremap <C-k> <Up>
 inoremap <C-h> <Left>
@@ -197,22 +196,10 @@ inoremap (<Enter> ()<Left>
 inoremap [<Enter> []<Left>
 inoremap {<Enter> {}<Left>
 
-" QuickFixのみの場合自動で閉じる
-augroup QfAutoCommands
-    autocmd!
-    " Auto-close quickfix window
-    autocmd WinEnter * if (winnr('$') == 1) && (getbufvar(winbufnr(0), '&buftype')) == 'quickfix' | quit | endif
-augroup END
-
+" -----------------------------------------------------------------------------
+" プラグイン
+" -----------------------------------------------------------------------------
 if ((has('nvim') || has('timers') || v:version >= 800) && has('python3'))
-    if !&compatible
-        set nocompatible
-    endif
-
-    " reset augroup
-    augroup MyAutoCmd
-        autocmd!
-    augroup END
 
     " dein settings {{{
     " -----------------------------------------------------------------------------
@@ -348,6 +335,7 @@ if ((has('nvim') || has('timers') || v:version >= 800) && has('python3'))
         "  autocmd FileType denite highlight CursorLine ctermfg=100 ctermbg=7
     augroup END
 
+    " Deniteバッファ内の操作
     autocmd FileType denite call s:denite_my_settings()
     function! s:denite_my_settings() abort
         nnoremap <silent><buffer><expr> <CR>    denite#do_map('do_action')
@@ -539,7 +527,6 @@ inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
 " nmap <silent> gi <Plug>(coc-implementation)
 " nmap <silent> gr <Plug>(coc-references)
 
-
 " fzf用設定
 let g:fzf_command_prefix = 'Fzf'
 nnoremap <leader>fb :FzfBuffers<CR>
@@ -585,8 +572,6 @@ let g:fzf_layout = { 'down': '30%' }
 set conceallevel=0
 let g:vim_json_syntax_conceal=0
 
-" ファイルタイプ別のVimプラグイン/インデントを有効にする
-filetype plugin indent on
 
 " vim-fugitive用設定
 nnoremap <leader>gd :Git diff<CR>
