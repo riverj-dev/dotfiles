@@ -1,12 +1,12 @@
---  
---   ________    ___      ___  ___   _____ ______      
---  |\   ___  \ |\  \    /  /||\  \ |\   _ \  _   \    
---  \ \  \\ \  \\ \  \  /  / /\ \  \\ \  \\\__\ \  \   
---   \ \  \\ \  \\ \  \/  / /  \ \  \\ \  \\|__| \  \  
+--
+--   ________    ___      ___  ___   _____ ______
+--  |\   ___  \ |\  \    /  /||\  \ |\   _ \  _   \
+--  \ \  \\ \  \\ \  \  /  / /\ \  \\ \  \\\__\ \  \
+--   \ \  \\ \  \\ \  \/  / /  \ \  \\ \  \\|__| \  \
 --    \ \  \\ \  \\ \    / /    \ \  \\ \  \    \ \  \ 
 --     \ \__\\ \__\\ \__/ /      \ \__\\ \__\    \ \__\
 --     \|__| \|__| \|__|/        \|__| \|__|     \|__|
---                                                     
+--
 -- -----------------------------------------------------------------------------
 -- 基本設定
 -- -----------------------------------------------------------------------------
@@ -22,7 +22,7 @@ vim.opt.swapfile = false
 vim.opt.autoread = true
 -- バッファを変更可能とする
 vim.opt.modifiable = true
--- ファイルの書き込み可能とする 
+-- ファイルの書き込み可能とする
 vim.opt.write = true
 -- バッファが編集中でもその他のファイルを開けるように
 vim.opt.hidden = true
@@ -127,9 +127,9 @@ vim.api.nvim_create_autocmd( 'quickfixcmdpost', {
 -- キーバインド（ノーマルモード）
 -- -----------------------------------------------------------------------------
 -- 行頭・行末へのカーソル移動
-vim.keymap.set('n', '<leader>h', '0')
-vim.keymap.set('n', '<leader>l', '$')
--- 検索語が画面の真ん中に来るようにする
+vim.keymap.set('n', '<leader>h', '0', {desc = '-- 0: 行頭へ移動'})
+vim.keymap.set('n', '<leader>l', '$', {desc = '-- $: 行末へ移動'})
+-- 検索語が画面の中心に来るようにする
 vim.keymap.set('n', 'n', 'nzz', {remap = true})
 vim.keymap.set('n', 'N', 'Nzz', {remap = true})
 vim.keymap.set('n', '*', '*zz', {remap = true})
@@ -137,7 +137,7 @@ vim.keymap.set('n', '#', '#zz', {remap = true})
 vim.keymap.set('n', 'g*', 'g*zz', {remap = true})
 vim.keymap.set('n', 'g#', 'g#zz', {remap = true})
 -- ESC連打でハイライト解除
-vim.keymap.set('n', '<Esc><Esc>', ':nohlsearch<CR><Esc>', {remap = true})
+vim.keymap.set('n', '<Esc><Esc>', ':nohlsearch<CR><Esc>', {remap = true, silent = true} , {desc = '-- ハイライト解除'})
 -- 折り返し時に表示行単位での移動できるようにする
 -- nnoremap j gj
 vim.keymap.set('n', 'j', 'gj')
@@ -145,29 +145,29 @@ vim.keymap.set('n', 'j', 'gj')
 vim.keymap.set('n', 'k', 'gk')
 -- Yキーでカーソル位置から行末までヤンク
 -- nnoremap Y y$
-vim.keymap.set('n', 'Y', 'y$')
+vim.keymap.set('n', 'Y', 'y$', {desc = '-- y$: カーソル位置から行末までヤンク'})
 -- ypキーでヤンクレジスタの文字列をペースト
 -- noremap yp "0P
-vim.keymap.set('n', 'yp', '"0P')
+vim.keymap.set('n', 'yp', '"0P', {desc = '-- \"0P: ヤンクレジスタの文字列をペースト'})
 -- cpキーで無名レジスタの文字列をペースト
 -- noremap cp ""P
-vim.keymap.set('n', 'cp', '""P')
+vim.keymap.set('n', 'cp', '""P', {desc = '-- \"\"P: 無名レジスタの文字列をペースト'})
 -- cオペレータをヤンクしない
 -- nnoremap c "_c
 vim.keymap.set('n', 'c', '"_c')
 -- Ctrl-sでスペースを挿入
 -- noremap <C-s> i<Space><ESC>
-vim.keymap.set('n', '<C-s>', 'i<Space><Esc>')
+vim.keymap.set('n', '<C-s>', 'i<Space><Esc>', {desc = '-- i<Space><Esc>: スペース挿入'})
 -- Ctrl-mで直前のヤンクの末尾に移動
 -- nmap <C-m> `]
-vim.keymap.set('n', '<C-m>', '`]', {remap = true})
+vim.keymap.set('n', '<C-m>', '`]', {remap = true}, {desc ='-- `]: 直前のヤンクの末尾に移動'})
 -- カーソル下の単語をハイライトしてから置換する
-vim.keymap.set('n', '<Space><Space>', [[':<C-u>%s/\<' . expand('<cword>') . '\>//g']], { noremap = true, silent = false, expr = true })
+vim.keymap.set('n', '<leader>r', [[':<C-u>%s/\<' . expand('<cword>') . '\>//g']], { noremap = true, silent = false, expr = true }, {desc = '-- カーソル下の単語を置換'})
 -- カーソル位置を元に戻す
 -- noremap <leader>o <C-O>
-vim.keymap.set('n', '<leader>o', '<C-O>')
+vim.keymap.set('n', '<leader>o', '<C-O>', {desc = '-- <C-O>: カーソル位置を戻す'})
 -- カーソル位置を進む
-vim.keymap.set('n', '<leader>i', '<C-I>')
+vim.keymap.set('n', '<leader>i', '<C-I>', {desc = '-- <C-I>: カーソル位置を進める'})
 
 -- -----------------------------------------------------------------------------
 -- キーバインド（ウィンドウ（ペイン）操作）
