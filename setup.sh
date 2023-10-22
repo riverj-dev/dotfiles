@@ -8,7 +8,6 @@ if type nvim > /dev/null 2>&1; then
 #        ln -s $HOME/dotfiles/.vimrc $XDG_CONFIG_HOME/nvim/init.vim
 #        ln -s $HOME/dotfiles/dein.toml $XDG_CONFIG_HOME/nvim/dein.toml
         ln -s $HOME/dotfiles/init.lua $XDG_CONFIG_HOME/nvim/init.lua
-        ln -s $HOME/dotfiles/plugins.lua $XDG_CONFIG_HOME/nvim/plugins.lua
         ln -s $HOME/dotfiles/init.lua $HOME/.vimrc
     fi
 else
