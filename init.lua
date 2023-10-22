@@ -1,204 +1,251 @@
-"         _
-"  __   _(_)_ __ ___
-"  \ \ / / | '_ ` _ \ 
-"   \ V /| | | | | | |
-"    \_/ |_|_| |_| |_|
-"
-" :source ~/.vimrc
+--
+--   ________    ___      ___  ___   _____ ______
+--  |\   ___  \ |\  \    /  /||\  \ |\   _ \  _   \
+--  \ \  \\ \  \\ \  \  /  / /\ \  \\ \  \\\__\ \  \
+--   \ \  \\ \  \\ \  \/  / /  \ \  \\ \  \\|__| \  \
+--    \ \  \\ \  \\ \    / /    \ \  \\ \  \    \ \  \ 
+--     \ \__\\ \__\\ \__/ /      \ \__\\ \__\    \ \__\
+--     \|__| \|__| \|__|/        \|__| \|__|     \|__|
+--
+-- -----------------------------------------------------------------------------
+-- 基本設定
+-- -----------------------------------------------------------------------------
+-- デフォルト文字コードをUTF-8に設定
+vim.opt.enc = 'utf-8'
+-- ファイルエンコーディングをUTF-8に設定
+vim.opt.fenc = 'utf-8'
+-- バックアップファイルを作らない
+vim.opt.backup = false
+-- スワップファイルを作らない
+vim.opt.swapfile = false
+-- 編集中のファイルが変更されたら自動で読み直す
+vim.opt.autoread = true
+-- バッファを変更可能とする
+vim.opt.modifiable = true
+-- ファイルの書き込み可能とする
+vim.opt.write = true
+-- バッファが編集中でもその他のファイルを開けるように
+vim.opt.hidden = true
+-- 入力中のコマンドをステータスに表示する
+vim.opt.showcmd = true
+-- マウス操作を有効にする
+vim.opt.mouse = 'a'
+-- クリップボードを有効にする
+vim.opt.clipboard:append{'unnamedplus'}
+-- leader をスペースに割当て
+vim.g.mapleader = ' '
+-- ファイルタイプ別のVimプラグイン/インデントを有効にする
+vim.opt.filetype = 'plugin', 'indent', 'on'
 
-" -----------------------------------------------------------------------------
-" 基本設定
-" -----------------------------------------------------------------------------
-" デフォルト文字コードをUTF-8に設定
-set enc=utf-8
-" ファイルエンコーディングをUTF-8に設定
-set fenc=utf-8
-" バックアップファイルを作らない
-set nobackup
-" スワップファイルを作らない
-set noswapfile
-" 編集中のファイルが変更されたら自動で読み直す
-set autoread
-" バッファを変更可能とする
-set modifiable
-" ファイルの書き込み可能とする 
-set write
-" バッファが編集中でもその他のファイルを開けるように
-set hidden
-" 入力中のコマンドをステータスに表示する
-set showcmd
-" マウス操作を有効にする
-set mouse=a
-" クリップボードを有効にする
-set clipboard^=unnamedplus
-" 256色対応
-set t_Co=256
-" leader をスペースに割当て
-let mapleader = "\<Space>"
-" ファイルタイプ別のVimプラグイン/インデントを有効にする
-filetype plugin indent on
-" オートコマンド初期化
-augroup vimrc
-    autocmd!
-    " インサートモードに入る時に自動でコメントアウトされないようにする
-    autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
-    " QuickFixのみの場合自動で閉じる
-    autocmd WinEnter * if (winnr('$') == 1) && (getbufvar(winbufnr(0), '&buftype')) == 'quickfix' | quit | endif
-augroup END
+-- オートコマンド初期化
+vim.api.nvim_create_augroup( 'vimrc', {} )
+-- インサートモードに入る時に自動でコメントアウトされないようにする
+vim.api.nvim_create_autocmd( 'filetype', {
+  group = 'vimrc',
+  command = 'setlocal formatoptions-=c formatoptions-=r formatoptions-=o'
+})
+-- QuickFixのみの場合自動で閉じる
+vim.api.nvim_create_autocmd( 'winenter', {
+  group = 'vimrc',
+  command = "if (winnr('$') == 1) && (getbufvar(winbufnr(0), '&buftype')) == 'quickfix' | quit | endif"
+})
 
-" -----------------------------------------------------------------------------
-" 画面表示設定
-" -----------------------------------------------------------------------------
-" 行番号を表示
-set number
-" 現在の行を強調表示
-set cursorline
-" 現在の列を強調表示
-set cursorcolumn
-" 行末の1文字先までカーソルを移動できるように
-set virtualedit=onemore
-" 自動的に改行が入るのを無効化
-set textwidth=0
-" 80文字目にラインを入れる
-set colorcolumn=80
-" スマートインデント
-set smartindent
-" ビープ音を可視化
-set visualbell
-" 括弧入力時の対応する括弧を表示
-set showmatch
-" ステータスラインを常に表示
-set laststatus=2
-" コマンドラインの補完
-set wildmode=list:longest
-" ダブルバイト文字の崩れ防止
-set ambiwidth=double
-" スクロール送り開始行数
-set scrolloff=10
-" 補完メニューの高さを指定
-set pumheight=10
+-- -----------------------------------------------------------------------------
+-- 画面表示設定
+-- -----------------------------------------------------------------------------
+-- 行番号を表示
+vim.wo.number = true
+-- 現在の行を強調表示
+vim.opt.cursorline = true
+-- 現在の列を強調表示
+vim.opt.cursorcolumn = true
+-- 行末の1文字先までカーソルを移動できるように
+vim.opt.virtualedit = 'onemore'
+-- 自動的に改行が入るのを無効化
+vim.opt.textwidth = 0
+-- 80文字目にラインを入れる
+vim.opt.colorcolumn = '80'
+-- スマートインデント
+vim.opt.smartindent = true
+-- ビープ音を可視化
+vim.opt.visualbell = true
+-- 括弧入力時の対応する括弧を表示
+vim.opt.showmatch = true
+-- ステータスラインを常に表示
+vim.opt.laststatus = 2
+-- コマンドラインの補完
+vim.opt.wildmode = 'list:longest'
+--行数表示の横に余白を追加
+-- vim.opt.signcolumn = 'yes'
+-- ダブルバイト文字の崩れ防止
+-- vim.opt.ambiwidth = 'double'
+-- スクロール送り開始行数
+vim.opt.scrolloff = 10
+-- 補完メニューの高さを指定
+vim.opt.pumheight = 10
+-- 256色対応
+-- vim.opt.t_Co = 256
+vim.opt.winblend = 20
+vim.opt.pumblend = 20
+vim.opt.termguicolors=true
 
-" -----------------------------------------------------------------------------
-" タブ文字設定
-" -----------------------------------------------------------------------------
-" タブ文字を半角スペースにする
-set expandtab
-" 行頭以外のTab文字の表示幅
-set tabstop=4
-" 行頭でのTab文字の表示幅
-set shiftwidth=4
-" 不可視文字を可視化(タブが「>-」と表示される)
-set list listchars=tab:\>\-
+-- -----------------------------------------------------------------------------
+-- タブ文字設定
+-- -----------------------------------------------------------------------------
+-- タブ文字を半角スペースにする
+vim.opt.expandtab = true
+-- 行頭以外のTab文字の表示幅
+vim.opt.tabstop = 4
+-- 行頭でのTab文字の表示幅
+vim.opt.shiftwidth = 4
+-- 不可視文字を可視化(タブが「>-」と表示される)
+vim.opt.listchars = {tab='>-'}
 
-" -----------------------------------------------------------------------------
-" 検索設定
-" -----------------------------------------------------------------------------
-" 検索文字列が小文字の場合は大文字小文字を区別なく検索する
-set ignorecase
-" 検索文字列に大文字が含まれている場合は区別して検索する
-set smartcase
-" 検索文字列入力時に順次対象文字列にヒットさせる
-set incsearch
-" 検索時に最後まで行ったら最初に戻る
-set wrapscan
-" 検索語をハイライト表示
-set hlsearch
-" vimgrepすると自動的にあたらしいウィンドウで検索結果一覧を表示する
-autocmd QuickFixCmdPost *grep* cwindow
+-- -----------------------------------------------------------------------------
+-- 検索設定
+-- -----------------------------------------------------------------------------
+-- 検索文字列が小文字の場合は大文字小文字を区別なく検索する
+vim.opt.ignorecase = true
+-- 検索文字列に大文字が含まれている場合は区別して検索する
+vim.opt.smartcase = true
+-- 検索文字列入力時に順次対象文字列にヒットさせる
+vim.opt.incsearch = true
+-- 検索時に最後まで行ったら最初に戻る
+vim.opt.wrapscan = true
+-- 検索語をハイライト表示する
+vim.opt.hlsearch = true
+-- vimgrepすると自動的にあたらしいウィンドウで検索結果一覧を表示する
+-- TODO not working
+vim.api.nvim_create_autocmd( 'quickfixcmdpost', {
+  command = 'cwindow',
+  pattern = 'grep'
+})
+-- vimgrepすると自動的にあたらしいウィンドウで検索結果一覧を表示する
+-- autocmd QuickFixCmdPost *grep* cwindow
 
-" -----------------------------------------------------------------------------
-" キーバインド（ノーマルモード）
-" -----------------------------------------------------------------------------
-" 行頭・行末へのカーソル移動
-noremap <leader>h 0
-noremap <leader>l $
-" 検索語が画面の真ん中に来るようにする
-nmap n nzz
-nmap N Nzz
-nmap * *zz
-nmap # #zz
-nmap g* g*zz
-nmap g# g#zz
-" ESC連打でハイライト解除
-nmap <Esc><Esc> :nohlsearch<CR><Esc>
-" 折り返し時に表示行単位での移動できるようにする
-nnoremap j gj
-nnoremap k gk
-" Yキーでカーソル位置から行末までヤンク
-nnoremap Y y$
-" ypキーでヤンクレジスタの文字列をペースト
-noremap yp "0P
-" cpキーで無名レジスタの文字列をペースト
-noremap cp ""P
-" cオペレータをヤンクしない
-nnoremap c "_c
-" Ctrl-sでスペースを挿入
-noremap <C-s> i<Space><ESC>
-" Ctrl-mで直前のヤンクの末尾に移動
-nmap <C-m> `]
-" leader + r で置換
-nnoremap <silent> <leader>r :%s///g<Left><Left><Left>
-" カーソル下の単語をハイライトする
-nnoremap <silent> <leader><leader> "zyiw:let @/='\<' . @z . '\>'<CR>:set hlsearch<CR>
-" カーソル下の単語をハイライトしてから置換する
-nmap # <Space><Space> :%s/<C-r>///g<Left><Left>
-" カーソル位置を元に戻す
-noremap <leader>o <C-O>
-" カーソル位置を進む
-noremap <leader>i <C-I>
+-- -----------------------------------------------------------------------------
+-- キーバインド（ノーマルモード）
+-- -----------------------------------------------------------------------------
+-- 行頭・行末へのカーソル移動
+vim.keymap.set('n', '<leader>h', '0', {desc = '-- 0: 行頭へ移動'})
+vim.keymap.set('n', '<leader>l', '$', {desc = '-- $: 行末へ移動'})
+-- 検索語が画面の中心に来るようにする
+vim.keymap.set('n', 'n', 'nzz', {remap = true})
+vim.keymap.set('n', 'N', 'Nzz', {remap = true})
+vim.keymap.set('n', '*', '*zz', {remap = true})
+vim.keymap.set('n', '#', '#zz', {remap = true})
+vim.keymap.set('n', 'g*', 'g*zz', {remap = true})
+vim.keymap.set('n', 'g#', 'g#zz', {remap = true})
+-- ESC連打でハイライト解除
+vim.keymap.set('n', '<Esc><Esc>', ':nohlsearch<CR><Esc>', {remap = true, silent = true} , {desc = '-- ハイライト解除'})
+-- 折り返し時に表示行単位での移動できるようにする
+-- nnoremap j gj
+vim.keymap.set('n', 'j', 'gj')
+-- nnoremap k gk
+vim.keymap.set('n', 'k', 'gk')
+-- Yキーでカーソル位置から行末までヤンク
+-- nnoremap Y y$
+vim.keymap.set('n', 'Y', 'y$', {desc = '-- y$: カーソル位置から行末までヤンク'})
+-- ypキーでヤンクレジスタの文字列をペースト
+-- noremap yp "0P
+vim.keymap.set('n', 'yp', '"0P', {desc = '-- \"0P: ヤンクレジスタの文字列をペースト'})
+-- cpキーで無名レジスタの文字列をペースト
+-- noremap cp ""P
+vim.keymap.set('n', 'cp', '""P', {desc = '-- \"\"P: 無名レジスタの文字列をペースト'})
+-- cオペレータをヤンクしない
+-- nnoremap c "_c
+vim.keymap.set('n', 'c', '"_c')
+-- Ctrl-sでスペースを挿入
+-- noremap <C-s> i<Space><ESC>
+vim.keymap.set('n', '<C-s>', 'i<Space><Esc>', {desc = '-- i<Space><Esc>: スペース挿入'})
+-- Ctrl-mで直前のヤンクの末尾に移動
+-- nmap <C-m> `]
+vim.keymap.set('n', '<C-m>', '`]', {remap = true}, {desc ='-- `]: 直前のヤンクの末尾に移動'})
+-- カーソル下の単語をハイライトしてから置換する
+vim.keymap.set('n', '<leader>r', [[':<C-u>%s/\<' . expand('<cword>') . '\>//g']], { noremap = true, silent = false, expr = true }, {desc = '-- カーソル下の単語を置換'})
+-- カーソル位置を元に戻す
+-- noremap <leader>o <C-O>
+vim.keymap.set('n', '<leader>o', '<C-O>', {desc = '-- <C-O>: カーソル位置を戻す'})
+-- カーソル位置を進む
+vim.keymap.set('n', '<leader>i', '<C-I>', {desc = '-- <C-I>: カーソル位置を進める'})
 
-" -----------------------------------------------------------------------------
-" キーバインド（ウィンドウ（ペイン）操作）
-" -----------------------------------------------------------------------------
-" ウィンドウ操作
-" ウィンドウ間移動
-nnoremap <left>   <C-w>h
-nnoremap <right>  <C-w>l
-nnoremap <up>     <C-w>k
-nnoremap <down>   <C-w>j
-" ウィンドウ水平分割
-nnoremap ss :<C-u>sp<CR>
-" ウィンドウ垂直分割
-nnoremap sv :<C-u>vs<CR>
-" ウィンドウを閉じる
-nnoremap sq :<C-u>q<CR>
+-- -----------------------------------------------------------------------------
+-- キーバインド（ウィンドウ（ペイン）操作）
+-- -----------------------------------------------------------------------------
+-- ウィンドウ操作
+-- ウィンドウ間移動
+-- nnoremap <left>   <C-w>h
+vim.keymap.set('n', '<left>', '<C-w>h')
+-- nnoremap <right>  <C-w>l
+vim.keymap.set('n', '<right>', '<C-w>l')
+-- nnoremap <up>     <C-w>k
+vim.keymap.set('n', '<up>', '<C-w>k')
+-- nnoremap <down>   <C-w>j
+vim.keymap.set('n', '<down>', '<C-w>j')
+-- ウィンドウ水平分割
+-- nnoremap ss :<C-u>sp<CR>
+vim.keymap.set('n', 'ss', '<C-u>sp<Cr>')
+-- ウィンドウ垂直分割
+-- nnoremap sv :<C-u>vs<CR>
+vim.keymap.set('n', 'sv', '<C-u>vs<Cr>')
+-- ウィンドウを閉じる
+-- nnoremap sq :<C-u>q<CR>
+vim.keymap.set('n', 'sq', '<C-u>q<Cr>')
 
-" バッファを閉じる
-nnoremap sQ :<C-u>bd<CR>
+-- バッファを閉じる
+-- nnoremap sQ :<C-u>bd<CR>
+vim.keymap.set('n', 'sQ', '<C-u>bq<Cr>')
 
-" タブ操作
-" 新規タブ
-nnoremap st :<C-u>tabnew<CR>
-" 次のタブに切替
-nnoremap sn gt
-" 前のタブに切替
-nnoremap sp gT
-" タブ移動（前のタブ）
-nnoremap gr :tabprevious<CR>
+-- タブ操作
+ -- 新規タブ
+-- nnoremap st :<C-u>tabnew<CR>
+vim.keymap.set('n', 'st', ':<C-u>tabnew<Cr>')
+-- 次のタブに切替
+-- nnoremap sn gt
+vim.keymap.set('n', 'sn', 'gt')
+-- 前のタブに切替
+-- nnoremap sp gT
+vim.keymap.set('n', 'sp', 'gT')
+-- タブ移動（前のタブ）
+-- nnoremap gr :tabprevious<CR>
+vim.keymap.set('n', 'gr', ':tabprevious<Cr>')
 
-" -----------------------------------------------------------------------------
-" キーバインド（インサートモード）
-" -----------------------------------------------------------------------------
-" jjでエスケープ
-inoremap <silent> jj <ESC>
-" 日本語入力時のjjでエスケープ
-inoremap <silent> ｊｊ <ESC>
-inoremap <silent> っｊ <ESC>
-" インサートモードでのカーソル移動
-inoremap <C-j> <Down>
-inoremap <C-k> <Up>
-inoremap <C-h> <Left>
-inoremap <C-l> <Right>
-" 括弧補完
-inoremap "<Enter> ""<left>
-inoremap '<Enter> ''<left>
-inoremap (<Enter> ()<Left>
-inoremap [<Enter> []<Left>
-inoremap {<Enter> {}<Left>
+-- -----------------------------------------------------------------------------
+-- キーバインド（インサートモード）
+-- -----------------------------------------------------------------------------
+-- jjでエスケープ
+-- inoremap <silent> jj <ESC>
+vim.keymap.set('i', 'jj', '<Esc>', {silent = true})
+-- 日本語入力時のjjでエスケープ
+-- inoremap <silent> ｊｊ <ESC>
+-- inoremap <silent> っｊ <ESC>
+-- インサートモードでのカーソル移動
+-- inoremap <C-j> <Down>
+vim.keymap.set('i', '<C-j>', '<down>')
+-- inoremap <C-k> <Up>
+vim.keymap.set('i', '<C-k>', '<Up>')
+-- inoremap <C-h> <Left>
+vim.keymap.set('i', '<C-h>', '<Left>')
+-- inoremap <C-l> <Right>
+vim.keymap.set('i', '<C-l>', '<Right>')
+-- 括弧補完
+-- inoremap "<Enter> ""<left>
+vim.keymap.set('i', '"<Enter>', '""<Left>')
+-- inoremap '<Enter> ''<left>
+vim.keymap.set('i', '\'<Enter>', '\'\'<Left>')
+-- inoremap (<Enter> ()<Left>
+vim.keymap.set('i', '(<Enter>', '()<Left>')
+-- inoremap [<Enter> []<Left>
+vim.keymap.set('i', '[<Enter>', '[]<Left>')
+-- inoremap {<Enter> {}<Left>
+vim.keymap.set('i', '{<Enter>', '{}<Left>')
 
-" -----------------------------------------------------------------------------
-" プラグイン
-" -----------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
+-- プラグイン
+-- -----------------------------------------------------------------------------
+require('plugins')
+
+--[[
 if ((has('nvim') || has('timers') || v:version >= 800) && has('python3'))
 
     " dein settings {{{
@@ -225,7 +272,7 @@ if ((has('nvim') || has('timers') || v:version >= 800) && has('python3'))
 
         call dein#begin(s:dein_dir)
 
-        " dein 
+        " dein
         call dein#add('Shougo/dein.vim')
 
         " denite
@@ -649,3 +696,4 @@ augroup END
 "      autocmd TextYankPost * :call system('win32yank.exe -i', @")
 "    augroup END
 "endif
+]]

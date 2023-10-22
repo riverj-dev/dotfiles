@@ -346,7 +346,7 @@ function fzf-fileOpen() {
             --select-1 \
             --exit-0 \
             --preview 'bat --color=always {}' \
-            --preview-window=right,+3 --prompt='Search word >'
+            --prompt='Search word >'
     )
     [ -n "$selected_file" ] && vim `echo "${selected_file}" | tr '\n' ' '`
 }
@@ -374,7 +374,6 @@ function fzf-rg() {
             --nth 4.. \
             --ansi \
             --preview 'bat --color=always {1} --highlight-line {2}'  \
-            --preview-window=right,+"{2}-3"  \
             --prompt='Grep word >' \
         | awk -F: '{print $1, $2}'
     )
@@ -419,12 +418,17 @@ function fzf-select-history() {
     else
         tac="tail -r"
     fi
-    BUFFER=$(history -n 1 | eval $tac | fzf --header='command history' --no-multi --no-preview --prompt='Search word >')
-    CURSOR=$#BUFFER
-#    zle clear-screen
+    BUFFER=$(history -n 1 | eval $tac | \
+        fzf \
+        --header='command history' \
+        --no-multi \
+        --no-preview \
+        --prompt='Search word >')
+    CURSOR=${#BUFFER}
+    zle clear-screen
 }
 zle -N fzf-select-history
-bindkey '^R' fzf-select-history
+bindkey '^T' fzf-select-history
 
 # gitのbranchをインクリメンタルサーチして表示する
 function fzf-git-switch() {
