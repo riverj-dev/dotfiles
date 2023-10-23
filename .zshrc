@@ -10,6 +10,7 @@
 # -----------------------------------------------------------------------------
 export LANG=en_US.UTF-8
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
+export PATH="$PATH:$HOME/.local/bin"
 
 # XDG Base Directories
 export XDG_CONFIG_HOME=$HOME/.config
@@ -243,7 +244,7 @@ alias ..4='cd ../../../..'
 # config
 alias dot='cd ~/dotfiles'
 alias gconf='vim ~/.gitconfig'
-alias vconf='vim ~/dotfiles/.vimrc'
+alias vconf='vim ~/dotfiles/init.lua'
 alias zconf='vim ~/dotfiles/.zshrc'
 alias tconf='vim ~/dotfiles/.tmux.conf'
 alias tgconf='vim ~/dotfiles/.tigrc'
@@ -428,7 +429,7 @@ function fzf-select-history() {
     zle clear-screen
 }
 zle -N fzf-select-history
-bindkey '^T' fzf-select-history
+bindkey '^R' fzf-select-history
 
 # gitのbranchをインクリメンタルサーチして表示する
 function fzf-git-switch() {
