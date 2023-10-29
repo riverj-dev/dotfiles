@@ -32,23 +32,26 @@ vim.opt.showcmd = true
 vim.opt.mouse = 'a'
 -- leader をスペースに割当て
 vim.g.mapleader = ' '
+-- JSONでダブルクォーテーションを表示
+vim.opt.conceallevel = 0
+vim.g.vim_json_syntax_conceal = 0
 -- ファイルタイプ別のVimプラグイン/インデントを有効にする
 vim.opt.filetype = 'plugin', 'indent', 'on'
 -- オートコマンド初期化
 vim.api.nvim_create_augroup( 'vimrc', {} )
 -- インサートモードに入る時に自動でコメントアウトされないようにする
-vim.api.nvim_create_autocmd( 'filetype', {
+vim.api.nvim_create_autocmd( 'FileType', {
   group = 'vimrc',
   command = 'setlocal formatoptions-=c formatoptions-=r formatoptions-=o'
 })
 -- QuickFixのみの場合自動で閉じる
-vim.api.nvim_create_autocmd( 'winenter', {
+vim.api.nvim_create_autocmd( 'WinEnter', {
   group = 'vimrc',
   command = "if (winnr('$') == 1) && (getbufvar(winbufnr(0), '&buftype')) == 'quickfix' | quit | endif"
 })
 -- クリップボードを有効にする
 vim.opt.clipboard:append{'unnamedplus'}
-if vim.fn.has("wsl") then
+if vim.fn.has('wsl') == 1 then
     vim.g.clipboard = {
         name = 'WslClipboard',
         copy = {
@@ -170,119 +173,149 @@ vim.keymap.set('n', 'c', '"_c')
 -- Ctrl-sでスペースを挿入
 -- noremap <C-s> i<Space><ESC>
 vim.keymap.set('n', '<C-s>', 'i<Space><Esc>', {desc = '-- i<Space><Esc>: スペース挿入'})
+-- Space + Ctrl で改行
+-- nnoremap <Space><CR> a<CR><Esc>
+vim.keymap.set('n', '<Space><CR>', 'a<CR><Esc>', {desc = 'Space + Ctrl で改行'})
 -- Ctrl-mで直前のヤンクの末尾に移動
 -- nmap <C-m> `]
 vim.keymap.set('n', '<C-m>', '`]', {remap = true}, {desc ='-- `]: 直前のヤンクの末尾に移動'})
 -- カーソル下の単語をハイライトしてから置換する
 vim.keymap.set('n', '<leader>r', [[':<C-u>%s/\<' . expand('<cword>') . '\>//g']], { noremap = true, silent = false, expr = true }, {desc = '-- カーソル下の単語を置換'})
 -- カーソル位置を元に戻す
--- noremap <leader>o <C-O>
-vim.keymap.set('n', '<leader>o', '<C-O>', {desc = '-- <C-O>: カーソル位置を戻す'})
+vim.keymap.set('n', '<leader>o', '<C-o>', {desc = '-- <C-o>: カーソル位置を戻す'})
 -- カーソル位置を進む
-vim.keymap.set('n', '<leader>i', '<C-I>', {desc = '-- <C-I>: カーソル位置を進める'})
+vim.keymap.set('n', '<leader>i', '<C-i>', {desc = '-- <C-i>: カーソル位置を進める'})
 
 -- -----------------------------------------------------------------------------
 -- キーバインド（ウィンドウ（ペイン）操作）
 -- -----------------------------------------------------------------------------
 -- ウィンドウ操作
 -- ウィンドウ間移動
--- nnoremap <left>   <C-w>h
-vim.keymap.set('n', '<left>', '<C-w>h')
--- nnoremap <right>  <C-w>l
-vim.keymap.set('n', '<right>', '<C-w>l')
--- nnoremap <up>     <C-w>k
-vim.keymap.set('n', '<up>', '<C-w>k')
--- nnoremap <down>   <C-w>j
-vim.keymap.set('n', '<down>', '<C-w>j')
+vim.keymap.set('n', '<left>',  '<C-w>h', {desc = '-- <C-w>h: 左のウィンドウへ移動'})
+vim.keymap.set('n', '<right>', '<C-w>l', {desc = '-- <C-w>l: 右のウィンドウへ移動'})
+vim.keymap.set('n', '<up>',    '<C-w>k', {desc = '-- <C-w>k: 上のウィンドウへ移動'})
+vim.keymap.set('n', '<down>',  '<C-w>j', {desc = '-- <C-w>j: 下のウィンドウへ移動'})
 -- ウィンドウ水平分割
--- nnoremap ss :<C-u>sp<CR>
-vim.keymap.set('n', 'ss', '<C-u>sp<Cr>')
+vim.keymap.set('n', 'ss',      '<C-u>sp<Cr>', {desc = '-- <C-u>sp<Cr>: ウィンドウ水平分割'})
 -- ウィンドウ垂直分割
--- nnoremap sv :<C-u>vs<CR>
-vim.keymap.set('n', 'sv', '<C-u>vs<Cr>')
+vim.keymap.set('n', 'sv',      '<C-u>vs<Cr>', {desc = '-- <C-u>vs<Cr>: ウィンドウ垂直分割'})
 -- ウィンドウを閉じる
--- nnoremap sq :<C-u>q<CR>
-vim.keymap.set('n', 'sq', '<C-u>q<Cr>')
+vim.keymap.set('n', 'sq',      '<C-u>q<Cr>',  {desc = '-- <C-u>q<Cr>: ウィンドウを閉じる'})
 
 -- バッファを閉じる
--- nnoremap sQ :<C-u>bd<CR>
-vim.keymap.set('n', 'sQ', '<C-u>bq<Cr>')
+vim.keymap.set('n', 'sQ',      '<C-u>bq<Cr>', {desc = '-- <C-u>bq<Cr>: バッファを閉じる'})
 
 -- タブ操作
  -- 新規タブ
--- nnoremap st :<C-u>tabnew<CR>
-vim.keymap.set('n', 'st', ':<C-u>tabnew<Cr>')
+vim.keymap.set('n', 'st', ':<C-u>tabnew<Cr>', {desc = '-- :<C-u>tabnew<Cr>: 新規タブ'})
 -- 次のタブに切替
--- nnoremap sn gt
-vim.keymap.set('n', 'sn', 'gt')
+vim.keymap.set('n', 'sn', 'gt', {desc = '-- gt: 次のタブへ移動'})
 -- 前のタブに切替
--- nnoremap sp gT
-vim.keymap.set('n', 'sp', 'gT')
--- タブ移動（前のタブ）
--- nnoremap gr :tabprevious<CR>
-vim.keymap.set('n', 'gr', ':tabprevious<Cr>')
+vim.keymap.set('n', 'sp', 'gT', {desc = '-- gT: 前のタブへ移動'})
+-- 前のタブに切替
+vim.keymap.set('n', 'gr', ':tabprevious<Cr>', {desc = '-- :tabprevious<Cr>: 前のタブへ移動'})
 
 -- -----------------------------------------------------------------------------
 -- キーバインド（インサートモード）
 -- -----------------------------------------------------------------------------
 -- jjでエスケープ
 -- inoremap <silent> jj <ESC>
-vim.keymap.set('i', 'jj', '<Esc>', {silent = true})
+vim.keymap.set('i', 'jj', '<Esc>', {silent = true}, {desc = ''})
 -- 日本語入力時のjjでエスケープ
 -- inoremap <silent> ｊｊ <ESC>
 -- inoremap <silent> っｊ <ESC>
 -- インサートモードでのカーソル移動
 -- inoremap <C-j> <Down>
-vim.keymap.set('i', '<C-j>', '<down>')
+vim.keymap.set('i', '<C-j>', '<down>', {desc = ''})
 -- inoremap <C-k> <Up>
-vim.keymap.set('i', '<C-k>', '<Up>')
+vim.keymap.set('i', '<C-k>', '<Up>', {desc = ''})
 -- inoremap <C-h> <Left>
-vim.keymap.set('i', '<C-h>', '<Left>')
+vim.keymap.set('i', '<C-h>', '<Left>', {desc = ''})
 -- inoremap <C-l> <Right>
-vim.keymap.set('i', '<C-l>', '<Right>')
+vim.keymap.set('i', '<C-l>', '<Right>', {desc = ''})
 -- 括弧補完
 -- inoremap "<Enter> ""<left>
-vim.keymap.set('i', '"<Enter>', '""<Left>')
+vim.keymap.set('i', '"<Enter>', '""<Left>', {desc = ''})
 -- inoremap '<Enter> ''<left>
-vim.keymap.set('i', '\'<Enter>', '\'\'<Left>')
+vim.keymap.set('i', '\'<Enter>', '\'\'<Left>', {desc = ''})
 -- inoremap (<Enter> ()<Left>
-vim.keymap.set('i', '(<Enter>', '()<Left>')
+vim.keymap.set('i', '(<Enter>', '()<Left>', {desc = ''})
 -- inoremap [<Enter> []<Left>
-vim.keymap.set('i', '[<Enter>', '[]<Left>')
+vim.keymap.set('i', '[<Enter>', '[]<Left>', {desc = ''})
 -- inoremap {<Enter> {}<Left>
-vim.keymap.set('i', '{<Enter>', '{}<Left>')
+vim.keymap.set('i', '{<Enter>', '{}<Left>', {desc = ''})
 
 -- -----------------------------------------------------------------------------
--- プラグイン
+-- Plugins
 -- -----------------------------------------------------------------------------
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system({
-        "git",
-        "clone",
-        "--filter=blob:none",
-        "https://github.com/folke/lazy.nvim.git",
-        "--branch=stable", -- latest stable release
+        'git',
+        'clone',
+        '--filter=blob:none',
+        'https://github.com/folke/lazy.nvim.git',
+        '--branch=stable', -- latest stable release
         lazypath,
     })
 end
 
 vim.opt.rtp:prepend(lazypath)
 
-require("lazy").setup({
+require('lazy').setup({
 
-    --- Appearance (Colorscheme)
+    --- Appearance (DashBoard)
     {
-        "blueshirts/darcula",
+        'goolord/alpha-nvim',
+        dependencies = { 'nvim-tree/nvim-web-devicons' },
         config = function()
-            vim.cmd([[colorscheme darcula]])
+
+            local alpha = require('alpha')
+            local dashboard = require('alpha.themes.dashboard')
+
+            -- Set header
+            dashboard.section.header.val = {
+                "                                                     ",
+                "  ███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗ ",
+                "  ████╗  ██║██╔════╝██╔═══██╗██║   ██║██║████╗ ████║ ",
+                "  ██╔██╗ ██║█████╗  ██║   ██║██║   ██║██║██╔████╔██║ ",
+                "  ██║╚██╗██║██╔══╝  ██║   ██║╚██╗ ██╔╝██║██║╚██╔╝██║ ",
+                "  ██║ ╚████║███████╗╚██████╔╝ ╚████╔╝ ██║██║ ╚═╝ ██║ ",
+                "  ╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝ ",
+                "                                                     ",
+            }
+
+            -- Set menu
+            dashboard.section.buttons.val = {
+                dashboard.button( "e", "  > New file"      , ":ene <BAR> startinsert <CR>"),
+                dashboard.button( "f", "  > Find file"     , ":Telescope find_files<CR>"),
+                dashboard.button( "r", "  > Recent"        , ":Telescope frecency<CR>"),
+                dashboard.button( "s", "  > Settings"      , ":e $MYVIMRC | :cd %:p:h | split . | wincmd k | pwd<CR>"),
+                dashboard.button( "d", "  > Dotfiles"      , ":cd ~/dotfiles | Telescope find_files<CR>"),
+                dashboard.button( "q", "  > Quit NVIM"     , ":qa<CR>"),
+            }
+
+            -- Send config to alpha
+            alpha.setup(dashboard.opts)
+
+            vim.api.nvim_create_autocmd( 'FileType', {
+                pattern = 'alpha',
+                command = 'setlocal nofoldenable'
+            })
+
         end
     },
-    --- Appearance (Indent line)
+    --- Appearance (Colorscheme)
     {
-        "Yggdroot/indentLine",
-        init = function()
-            vim.g["indentLine_color_gui"] = "#e0e0e0"
+        "sainnhe/gruvbox-material",
+        event = { "BufReadPre", "BufWinEnter" },
+        config = function()
+            vim.opt.background = "dark"
+            vim.g.gruvbox_material_background = "hard"
+            vim.g.gruvbox_material_ui_contrast = "high"
+            vim.g.gruvbox_material_better_performance = 1
+            vim.g.gruvbox_material_disable_italic_comment = 1
+            vim.cmd("colorscheme gruvbox-material")
         end
     },
     --- Appearance (Status line)
@@ -291,12 +324,116 @@ require("lazy").setup({
         event = "VeryLazy",
         dependencies = { "nvim-tree/nvim-web-devicons" },
         init = function()
-            require("lualine").setup()
+            require("lualine").setup {
+                options = {
+                    theme = "gruvbox-material"
+                }
+            }
+        end
+    },
+    --- Appearance (Scroll bar)
+    {
+        "petertriho/nvim-scrollbar",
+        event = "VimEnter",
+        dependencies = { 
+            "kevinhwang91/nvim-hlslens" ,
+            "lewis6991/gitsigns.nvim" 
+        },
+        config = function()
+            require("scrollbar").setup({
+                show = true,
+                set_highlights = true,
+                handle = {
+                    text = " ",
+                    color = "#3F4A5A",
+                    cterm = nil,
+                    highlight = "CursorColumn",
+                    hide_if_all_visible = true, -- Hides handle if all lines are visible
+                },
+                marks = {
+                    Search = {
+                        text = { "-", "=" },
+                        priority = 0,
+                        color = nil,
+                        cterm = nil,
+--                        highlight = "Search",
+                        highlight = "DiagnosticVirtualTextError",
+                    },
+                    Error = {
+                        text = { "-", "=" },
+                        priority = 1,
+                        color = nil,
+                        cterm = nil,
+                        highlight = "DiagnosticVirtualTextError",
+                    },
+                    Warn = {
+                        text = { "-", "=" },
+                        priority = 2,
+                        color = nil,
+                        cterm = nil,
+                        highlight = "DiagnosticVirtualTextWarn",
+                    },
+                    Info = {
+                        text = { "-", "=" },
+                        priority = 3,
+                        color = nil,
+                        cterm = nil,
+                        highlight = "DiagnosticVirtualTextInfo",
+                    },
+                    Hint = {
+                        text = { "-", "=" },
+                        priority = 4,
+                        color = nil,
+                        cterm = nil,
+                        highlight = "DiagnosticVirtualTextHint",
+                    },
+                    Misc = {
+                        text = { "-", "=" },
+                        priority = 5,
+                        color = nil,
+                        cterm = nil,
+                        highlight = "Normal",
+                    },
+                },
+                excluded_buftypes = {
+                    "terminal",
+                },
+                excluded_filetypes = {
+                    "prompt",
+                    "TelescopePrompt",
+                },
+                autocmd = {
+                    render = {
+                        "BufWinEnter",
+                        "TabEnter",
+                        "TermEnter",
+                        "WinEnter",
+                        "CmdwinLeave",
+                        -- "TextChanged",
+                        "VimResized",
+                        "WinScrolled",
+                    },
+                },
+                handlers = {
+                    diagnostic = true,
+                    search = true, -- Requires hlslens to be loaded, will run require("scrollbar.handlers.search").setup() for you
+                }, 
+            })
+
+            require('hlslens').setup()
+            require('scrollbar.handlers.search').setup({ })
+
+            require('gitsigns').setup()
+            require("scrollbar.handlers.gitsigns").setup()
         end
     },
     --- Appearance (UI hooks)
     {
         "stevearc/dressing.nvim",
+        event = "VimEnter",
+        init = function()
+            require("dressing").setup()
+        end
     },
     --- Appearance (Display command lines and messages in pop-up windows)
     {
@@ -332,36 +469,65 @@ require("lazy").setup({
     --- Appearance (Highlight of Yanked)
     {
         "machakann/vim-highlightedyank",
+        event = "VeryLazy",
         config = function()
             vim.g.highlightedyank_highlight_duration = 300
-            vim.api.nvim_create_autocmd( 'colorscheme', {
-                command = 'hi HighlightedyankRegion term=bold ctermfg=0 ctermbg=195 guifg=#000000 guibg=#FFCDD2',
-                pattern = '*'
-            })
+            vim.cmd("highlight HighlightedyankRegion term=bold ctermfg=0 ctermbg=195 guifg=#000000 guibg=#FFCDD2")
+--            vim.api.nvim_create_autocmd( 'ColorScheme', {
+--                pattern = '*',
+--                command = 'highlight HighlightedyankRegion term=bold ctermfg=0 ctermbg=195 guifg=#000000 guibg=#FFCDD2'
+--            })
         end
     },
---    {
---        -- Appearance (Highlight of movable)
---        'unblevable/quick-scope',
---        config = function()
---            vim.g.qs_highlight_on_keys = "['f', 'F', 't', 'T']"
---        end
---    },
+    --- Appearance (Highlight of cursor word)
+    {
+        "xiyaowong/nvim-cursorword",
+        event = "VeryLazy",
+        config = function()
+            vim.g.cursorword_min_width = 3
+            vim.g.cursorword_max_width = 20
+            vim.g.cursorword_disable_filetypes = { "TelescopePrompt" }
+            vim.cmd("highlight default CursorWord guifg=#0097A7 gui=underline ctermfg=155 cterm=underline")
+        end,
+    },
     --- Buffer (tab)
     {
         {
             'akinsho/bufferline.nvim', version = "*",
+            event = "VimEnter",
             dependencies = 'nvim-tree/nvim-web-devicons',
             init = function()
-                require("bufferline").setup()
-
-                vim.keymap.set('n', '<leader>wl', '<Cmd>BufferLineCloseRight<CR>')
-                vim.keymap.set('n', '<leader>wh', '<Cmd>BufferLineCloseLeft<CR>')
-                vim.keymap.set('n', '<leader>wall', '<Cmd>BufferLineCloseOthers<CR>')
-                vim.keymap.set('n', '<leader>we', '<Cmd>BufferLinePickClose<CR>')
-
-                vim.keymap.set('n', '<C-PageDown>', '<Cmd>BufferLineCycleNext<CR>')
-                vim.keymap.set('n', '<C-PageUp>', '<Cmd>BufferLineCyclePrev<CR>')
+                require("bufferline").setup({
+--                    options = {
+--                        separator_style = 'slant',
+--                    },
+                    highlights = {
+                        separator = {
+                            guifg = '#073642',
+                            guibg = '#002b36',
+                        },
+                        separator_selected = {
+                            guifg = '#073642',
+                        },
+                        background = {
+                            guifg = '#657b83',
+                            guibg = '#002b36'
+                        },
+                        buffer_selected = {
+                            guifg = '#fdf6e3',
+                            gui = "bold",
+                        },
+                        fill = {
+                            guibg = '#073642'
+                        }
+                    },
+                }) 
+                vim.keymap.set('n', '<leader>wl',   '<Cmd>BufferLineCloseRight<CR>'  , {desc = ''})
+                vim.keymap.set('n', '<leader>wh',   '<Cmd>BufferLineCloseLeft<CR>'   , {desc = ''})
+                vim.keymap.set('n', '<leader>wall', '<Cmd>BufferLineCloseOthers<CR>' , {desc = ''})
+                vim.keymap.set('n', '<leader>we',   '<Cmd>BufferLinePickClose<CR>'   , {desc = ''})
+                vim.keymap.set('n', '<C-PageDown>', '<Cmd>BufferLineCycleNext<CR>'   , {desc = ''})
+                vim.keymap.set('n', '<C-PageUp>',   '<Cmd>BufferLineCyclePrev<CR>'   , {desc = ''})
             end
         }
     },
@@ -370,15 +536,27 @@ require("lazy").setup({
         'ethanholz/nvim-lastplace',
         event = { 'BufNewFile', 'BufRead' },
     },
-    -- Operator (Text Replace)
+    --- Operator (Replace Textobject)
     {
-        'kana/vim-operator-replace',
-        dependencies = { 'kana/vim-operator-user' },
+        'gbprod/substitute.nvim',
+        event = "VeryLazy",
         config = function()
-            -- nmap R <Plug>(operator-replace)
-            vim.keymap.set('n', '_', '<Plug>(operator-replace)' , {remap = true})
+            require("substitute").setup({})
+            vim.keymap.set("n", "s",  require('substitute').operator, { noremap = true }, {desc = ''})
+            vim.keymap.set("n", "ss", require('substitute').line,     { noremap = true }, {desc = ''})
+            vim.keymap.set("n", "S",  require('substitute').eol,      { noremap = true }, {desc = ''})
+            vim.keymap.set("x", "s",  require('substitute').visual,   { noremap = true }, {desc = ''})
         end
     },
+    --- Operator (Replace Textobject)
+--    {
+--        'kana/vim-operator-replace',
+--        dependencies = { 'kana/vim-operator-user' },
+--        config = function()
+--            -- nmap R <Plug>(operator-replace)
+--            vim.keymap.set('n', '_', '<Plug>(operator-replace)' , {remap = true})
+--        end
+--    },
     --- Operator (Text modifier operation)
     {
         'tpope/vim-surround',
@@ -387,15 +565,24 @@ require("lazy").setup({
     {
         'tpope/vim-repeat',
     },
-    --- Operator (Cursor vertical move)
+    --- Operator (Trim whitespace)
+    {
+        'bronson/vim-trailing-whitespace',
+    },
+    --- Operator (Paste without indenting)
+    {
+        'ConradIrwin/vim-bracketed-paste',
+    },
+    --- Motion (Cursor vertical move)
     {
         'easymotion/vim-easymotion',
+        event = "VeryLazy",
         config = function()
-            vim.keymap.set('', '<Leader><Leader>', '<Plug>(easymotion-prefix)' , {remap = true})
-            vim.keymap.set('', '<Leader>j', '<Plug>(easymotion-j)' , {remap = true})
-            vim.keymap.set('', '<Leader>k', '<Plug>(easymotion-k)' , {remap = true})
-            vim.keymap.set('n', '<Leader>s', '<Plug>(easymotion-s2)' , {remap = true})
-            vim.keymap.set('x', '<Leader>s', '<Plug>(easymotion-s2)' , {remap = true})
+            vim.keymap.set('',  '<Leader><Leader>', '<Plug>(easymotion-prefix)' , {remap = true}, {desc = ''})
+            vim.keymap.set('',  '<Leader>j',        '<Plug>(easymotion-j)' ,      {remap = true}, {desc = ''})
+            vim.keymap.set('',  '<Leader>k',        '<Plug>(easymotion-k)' ,      {remap = true}, {desc = ''})
+            vim.keymap.set('n', '<Leader>s',        '<Plug>(easymotion-s2)' ,     {remap = true}, {desc = ''})
+            vim.keymap.set('x', '<Leader>s',        '<Plug>(easymotion-s2)' ,     {remap = true}, {desc = ''})
 
             vim.g.EasyMotion_do_mapping = 0
             vim.g.EasyMotion_smartcase= 1
@@ -406,13 +593,20 @@ require("lazy").setup({
             vim.g.EasyMotion_space_jump_first=1
         end
     },
-    --- Operator (Trim whitespace)
+    --- Motion (stay * motions)
     {
-        'bronson/vim-trailing-whitespace',
-    },
-    --- Operator (Paste without indenting)
-    {
-        'ConradIrwin/vim-bracketed-paste',
+        'haya14busa/vim-asterisk',
+        event = "VeryLazy",
+        config = function()
+            vim.keymap.set('',  '*',   '<Plug>(asterisk-*)' ,   {remap = false}, {desc = ''})
+            vim.keymap.set('',  '#',   '<Plug>(asterisk-#)' ,   {remap = false}, {desc = ''})
+            vim.keymap.set('',  'g*',  '<Plug>(asterisk-g*)' ,  {remap = false}, {desc = ''})
+            vim.keymap.set('',  'g#',  '<Plug>(asterisk-g#)' ,  {remap = false}, {desc = ''})
+            vim.keymap.set('',  'z*',  '<Plug>(asterisk-z*)' ,  {remap = false}, {desc = ''})
+            vim.keymap.set('',  'gz*', '<Plug>(asterisk-gz*)' , {remap = false}, {desc = ''})
+            vim.keymap.set('',  'z#',  '<Plug>(asterisk-z#)' ,  {remap = false}, {desc = ''})
+            vim.keymap.set('',  'gz#', '<Plug>(asterisk-gz#)' , {remap = false}, {desc = ''})
+        end
     },
     --- Window (Tree)
     {
@@ -429,9 +623,9 @@ require("lazy").setup({
                     adaptive_size = false,
                     width = 45,
                 },
-                vim.keymap.set('n', '<leader>n', ':NvimTreeToggle<CR>' , {silent = true} , {desc = '-- ツリーの表示/非表示切り替え'}),
-                vim.keymap.set('n', '<leader>f', ':NvimTreeFindFile<CR>' , {silent = true} , {desc = '-- ツリーのフォーカスをカレントファイルに移動'}),
-                vim.keymap.set('n', '<leader>ntc', ':NvimTreeCollapse<CR>' , {silent = true} , {desc = '-- ツリーを閉じる'}),
+                vim.keymap.set('n', '<leader>tn', ':NvimTreeToggle<CR>' ,   {silent = true , desc = '-- ツリーの表示/非表示切り替え'}),
+                vim.keymap.set('n', '<leader>tf', ':NvimTreeFindFile<CR>' , {silent = true , desc = '-- ツリーのフォーカスをカレントファイルに移動'}),
+                vim.keymap.set('n', '<leader>tc', ':NvimTreeCollapse<CR>' , {silent = true , desc = '-- ツリーを閉じる'}),
             })
 
             -- ファイルオープン時にnvim-treeを表示するがカーソルはバッファに残す
@@ -475,17 +669,28 @@ require("lazy").setup({
     },
     --- Fazzy Finder
     {
-        'nvim-telescope/telescope-fzf-native.nvim',
-        build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build'
-    },
-    {
         'nvim-telescope/telescope.nvim', tag = '0.1.4',
         cmd = 'Telescope',
         dependencies = {
             'nvim-lua/plenary.nvim',
             'nvim-tree/nvim-web-devicons',
+            "nvim-telescope/telescope-frecency.nvim",
+            { 
+                "nvim-telescope/telescope-live-grep-args.nvim" ,
+                version = "^1.0.0",
+            },
+            {
+                'nvim-telescope/telescope-fzf-native.nvim',
+                build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build'
+            },
+
         },
         init = function()
+
+            local actions = require("telescope.actions")
+            local lga_actions = require("telescope-live-grep-args.actions")
+            local lga_shortcuts = require("telescope-live-grep-args.shortcuts")
+
             require('telescope').setup({
                 defaults = {
                     file_ignore_patterns = {
@@ -506,6 +711,10 @@ require("lazy").setup({
                         '--smart-case',
                         '-uu',
                     },
+                    mappings = {
+                        i = { ["<esc>"] = actions.close },
+                        n = { ["q"] = actions.close },
+                    },
                 },
                 pickers = {
                     find_files = {
@@ -518,22 +727,38 @@ require("lazy").setup({
                         override_generic_sorter = true,  -- override the generic sorter
                         override_file_sorter = true,     -- override the file sorter
                         case_mode = 'smart_case',        -- or "ignore_case" or "respect_case"
+                    },
+                    live_grep_args = {
+                        auto_quoting = true, -- enable/disable auto-quoting
+                        mappings = { -- extend mappings
+                            i = {
+                                ["<C-q>"] = lga_actions.quote_prompt(),
+                                ["<C-f>"] = lga_actions.quote_prompt({ postfix = " -f " }),
+                            },
+                        },
                     }
                 },
             })
 
             require('telescope').load_extension('fzf')
+            require("telescope").load_extension("live_grep_args")
+            require("telescope").load_extension "frecency"
 
             local builtin = require('telescope.builtin')
-            vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-            vim.keymap.set('n', '<leader>fo', builtin.oldfiles, {})
-            vim.keymap.set('n', '<leader>fc', builtin.command_history, {})
-            vim.keymap.set('n', '<leader>fs', builtin.search_history, {})
-            vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
-            vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
-            vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
-            vim.keymap.set('n', '<leader>fr', builtin.registers, {})
-            vim.keymap.set('n', '<leader>fk', builtin.keymaps, {})
+            vim.keymap.set('n', "<C-t>f", builtin.find_files,              {desc = ''})
+            -- Use frecency
+--          vim.keymap.set('n', "<C-t>o", builtin.oldfiles,                {desc = ''})
+            vim.keymap.set("n", "<C-t>o", "<Cmd>Telescope frecency<CR>",   {desc = ''})
+            vim.keymap.set('n', "<C-t>c", builtin.command_history,         {desc = ''})
+            vim.keymap.set('n', "<C-t>s", builtin.search_history,          {desc = ''})
+            -- Use live_grep_args
+--          vim.keymap.set('n', '<A-g>', builtin.live_grep,                {desc = ''})
+            vim.keymap.set("n", "<C-t>g", ":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>", {desc = ''})
+--          vim.keymap.set("n", "<C-t>g", lga_shortcuts.grep_word_under_cursor, {desc = ''})
+            vim.keymap.set('n', "<C-t>b", builtin.buffers, {},             {desc = ''})
+            vim.keymap.set('n', "<C-t>h", builtin.help_tags, {},           {desc = ''})
+            vim.keymap.set('n', "<C-t>r", builtin.registers, {},           {desc = ''})
+            vim.keymap.set('n', "<C-t>k", builtin.keymaps, {},             {desc = ''})
         end
     },
     --- Terminal
@@ -549,7 +774,7 @@ require("lazy").setup({
                 },
             })
 
-            vim.keymap.set('n', '<leader>tt', ':ToggleTerm<CR>' , {})
+            vim.keymap.set('n', '<leader>tt', ':ToggleTerm<CR>', {desc = ''})
 
             local Terminal = require('toggleterm.terminal').Terminal
             local lazygit = Terminal:new({
@@ -561,10 +786,42 @@ require("lazy").setup({
                 lazygit:toggle()
             end
 
-            vim.api.nvim_set_keymap("n", "<leader>tg", "<cmd>lua _lazygit_toggle()<CR>", {noremap = true, silent = true})
+            vim.api.nvim_set_keymap("n", "<leader>tg", "<cmd>lua _lazygit_toggle()<CR>", {noremap = true, silent = true , desc = ''})
         end
     },
-    --- completion
+    --- Session
+    {
+
+    },
+    --- Completion
+    {
+        'neovim/nvim-lspconfig',
+        cmd = { "LspInfo", "LspLog" },
+        event = { "BufRead" },
+        init = function()
+        end,
+    },
+    {
+        "williamboman/mason.nvim",
+        cmd = { "Mason", "MasonInstall" },
+        event = { "WinNew", "WinLeave", "BufRead" },
+        init = function()
+            require("mason").setup()
+        end,
+    },
+    {
+        "williamboman/mason-lspconfig.nvim",
+        init = function()
+            require("mason-lspconfig").setup()
+            require("mason-lspconfig").setup_handlers {
+                function (server_name)
+                    require("lspconfig")[server_name].setup {
+                        on_attach = on_attach
+                    }
+                end,
+            }
+        end
+    },
     {'hrsh7th/nvim-cmp', event = {'InsertEnter', 'CmdlineEnter'} } ,
     {'hrsh7th/cmp-nvim-lsp', event = 'InsertEnter'},
     {'hrsh7th/cmp-buffer', event = 'InsertEnter'},
@@ -646,5 +903,6 @@ cmp.setup.cmdline(':', {
 })
 
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
 vim.cmd('let g:vsnip_filetypes = {}')
 
