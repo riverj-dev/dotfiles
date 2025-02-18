@@ -669,7 +669,7 @@ require('lazy').setup({
     },
     --- Fazzy Finder
     {
-        'nvim-telescope/telescope.nvim', tag = '0.1.4',
+        'nvim-telescope/telescope.nvim', tag = '0.1.8',
         cmd = 'Telescope',
         dependencies = {
             'nvim-lua/plenary.nvim',
