@@ -142,17 +142,17 @@ vim.api.nvim_create_autocmd( 'quickfixcmdpost', {
 -- キーバインド（ノーマルモード）
 -- -----------------------------------------------------------------------------
 -- 行頭・行末へのカーソル移動
-vim.keymap.set('n', '<leader>h', '0', {desc = '-- 0: 行頭へ移動'})
-vim.keymap.set('n', '<leader>l', '$', {desc = '-- $: 行末へ移動'})
+vim.keymap.set('n', '<leader>h', '0', { desc = '-- 0: 行頭へ移動' })
+vim.keymap.set('n', '<leader>l', '$', { desc = '-- $: 行末へ移動' })
 -- 検索語が画面の中心に来るようにする
-vim.keymap.set('n', 'n', 'nzz', {remap = true})
-vim.keymap.set('n', 'N', 'Nzz', {remap = true})
-vim.keymap.set('n', '*', '*zz', {remap = true})
-vim.keymap.set('n', '#', '#zz', {remap = true})
-vim.keymap.set('n', 'g*', 'g*zz', {remap = true})
-vim.keymap.set('n', 'g#', 'g#zz', {remap = true})
+vim.keymap.set('n', 'n', 'nzz', { remap = true})
+vim.keymap.set('n', 'N', 'Nzz', { remap = true})
+vim.keymap.set('n', '*', '*zz', { remap = true})
+vim.keymap.set('n', '#', '#zz', { remap = true})
+vim.keymap.set('n', 'g*', 'g*zz', { remap = true})
+vim.keymap.set('n', 'g#', 'g#zz', { remap = true})
 -- ESC連打でハイライト解除
-vim.keymap.set('n', '<Esc><Esc>', ':nohlsearch<CR><Esc>', {remap = true, silent = true} , {desc = '-- ハイライト解除'})
+vim.keymap.set('n', '<Esc><Esc>', ':nohlsearch<CR><Esc>', { remap = true, silent = true} , { desc = '-- ハイライト解除' })
 -- 折り返し時に表示行単位での移動できるようにする
 -- nnoremap j gj
 vim.keymap.set('n', 'j', 'gj')
@@ -160,90 +160,90 @@ vim.keymap.set('n', 'j', 'gj')
 vim.keymap.set('n', 'k', 'gk')
 -- Yキーでカーソル位置から行末までヤンク
 -- nnoremap Y y$
-vim.keymap.set('n', 'Y', 'y$', {desc = '-- y$: カーソル位置から行末までヤンク'})
+vim.keymap.set('n', 'Y', 'y$', { desc = '-- y$: カーソル位置から行末までヤンク' })
 -- ypキーでヤンクレジスタの文字列をペースト
 -- noremap yp "0P
-vim.keymap.set('n', 'yp', '"0P', {desc = '-- \"0P: ヤンクレジスタの文字列をペースト'})
+vim.keymap.set('n', 'yp', '"0P', { desc = '-- \"0P: ヤンクレジスタの文字列をペースト' })
 -- cpキーで無名レジスタの文字列をペースト
 -- noremap cp ""P
-vim.keymap.set('n', 'cp', '""P', {desc = '-- \"\"P: 無名レジスタの文字列をペースト'})
+vim.keymap.set('n', 'cp', '""P', { desc = '-- \"\"P: 無名レジスタの文字列をペースト' })
 -- cオペレータをヤンクしない
 -- nnoremap c "_c
 vim.keymap.set('n', 'c', '"_c')
 -- Ctrl-sでスペースを挿入
 -- noremap <C-s> i<Space><ESC>
-vim.keymap.set('n', '<C-s>', 'i<Space><Esc>', {desc = '-- i<Space><Esc>: スペース挿入'})
+vim.keymap.set('n', '<C-s>', 'i<Space><Esc>', { desc = '-- i<Space><Esc>: スペース挿入' })
 -- Space + Ctrl で改行
 -- nnoremap <Space><CR> a<CR><Esc>
-vim.keymap.set('n', '<Space><CR>', 'a<CR><Esc>', {desc = 'Space + Ctrl で改行'})
+vim.keymap.set('n', '<Space><CR>', 'a<CR><Esc>', { desc = 'Space + Ctrl で改行' })
 -- Ctrl-mで直前のヤンクの末尾に移動
 -- nmap <C-m> `]
-vim.keymap.set('n', '<C-m>', '`]', {remap = true}, {desc ='-- `]: 直前のヤンクの末尾に移動'})
+vim.keymap.set('n', '<C-m>', '`]', { remap = true}, { desc ='-- `]: 直前のヤンクの末尾に移動' })
 -- カーソル下の単語をハイライトしてから置換する
-vim.keymap.set('n', '<leader>r', [[':<C-u>%s/\<' . expand('<cword>') . '\>//g']], { noremap = true, silent = false, expr = true }, {desc = '-- カーソル下の単語を置換'})
+vim.keymap.set('n', '<leader>r', [[':<C-u>%s/\<' . expand('<cword>') . '\>//g']], { noremap = true, silent = false, expr = true }, { desc = '-- カーソル下の単語を置換' })
 -- カーソル位置を元に戻す
-vim.keymap.set('n', '<leader>o', '<C-o>', {desc = '-- <C-o>: カーソル位置を戻す'})
+vim.keymap.set('n', '<leader>o', '<C-o>', { desc = '-- <C-o>: カーソル位置を戻す' })
 -- カーソル位置を進む
-vim.keymap.set('n', '<leader>i', '<C-i>', {desc = '-- <C-i>: カーソル位置を進める'})
+vim.keymap.set('n', '<leader>i', '<C-i>', { desc = '-- <C-i>: カーソル位置を進める' })
 
 -- -----------------------------------------------------------------------------
 -- キーバインド（ウィンドウ（ペイン）操作）
 -- -----------------------------------------------------------------------------
 -- ウィンドウ操作
 -- ウィンドウ間移動
-vim.keymap.set('n', '<left>',  '<C-w>h', {desc = '-- <C-w>h: 左のウィンドウへ移動'})
-vim.keymap.set('n', '<right>', '<C-w>l', {desc = '-- <C-w>l: 右のウィンドウへ移動'})
-vim.keymap.set('n', '<up>',    '<C-w>k', {desc = '-- <C-w>k: 上のウィンドウへ移動'})
-vim.keymap.set('n', '<down>',  '<C-w>j', {desc = '-- <C-w>j: 下のウィンドウへ移動'})
+vim.keymap.set('n', '<left>',  '<C-w>h', { desc = '-- <C-w>h: 左のウィンドウへ移動' })
+vim.keymap.set('n', '<right>', '<C-w>l', { desc = '-- <C-w>l: 右のウィンドウへ移動' })
+vim.keymap.set('n', '<up>',    '<C-w>k', { desc = '-- <C-w>k: 上のウィンドウへ移動' })
+vim.keymap.set('n', '<down>',  '<C-w>j', { desc = '-- <C-w>j: 下のウィンドウへ移動' })
 -- ウィンドウ水平分割
-vim.keymap.set('n', 'ss',      '<C-u>sp<Cr>', {desc = '-- <C-u>sp<Cr>: ウィンドウ水平分割'})
+vim.keymap.set('n', 'ss',      '<C-u>sp<Cr>', { desc = '-- <C-u>sp<Cr>: ウィンドウ水平分割' })
 -- ウィンドウ垂直分割
-vim.keymap.set('n', 'sv',      '<C-u>vs<Cr>', {desc = '-- <C-u>vs<Cr>: ウィンドウ垂直分割'})
+vim.keymap.set('n', 'sv',      '<C-u>vs<Cr>', { desc = '-- <C-u>vs<Cr>: ウィンドウ垂直分割' })
 -- ウィンドウを閉じる
-vim.keymap.set('n', 'sq',      '<C-u>q<Cr>',  {desc = '-- <C-u>q<Cr>: ウィンドウを閉じる'})
+vim.keymap.set('n', 'sq',      '<C-u>q<Cr>',  { desc = '-- <C-u>q<Cr>: ウィンドウを閉じる' })
 
 -- バッファを閉じる
-vim.keymap.set('n', 'sQ',      '<C-u>bq<Cr>', {desc = '-- <C-u>bq<Cr>: バッファを閉じる'})
+vim.keymap.set('n', 'sQ',      '<C-u>bq<Cr>', { desc = '-- <C-u>bq<Cr>: バッファを閉じる' })
 
 -- タブ操作
  -- 新規タブ
-vim.keymap.set('n', 'st', ':<C-u>tabnew<Cr>', {desc = '-- :<C-u>tabnew<Cr>: 新規タブ'})
+vim.keymap.set('n', 'st', ':<C-u>tabnew<Cr>', { desc = '-- :<C-u>tabnew<Cr>: 新規タブ' })
 -- 次のタブに切替
-vim.keymap.set('n', 'sn', 'gt', {desc = '-- gt: 次のタブへ移動'})
+vim.keymap.set('n', 'sn', 'gt', { desc = '-- gt: 次のタブへ移動' })
 -- 前のタブに切替
-vim.keymap.set('n', 'sp', 'gT', {desc = '-- gT: 前のタブへ移動'})
+vim.keymap.set('n', 'sp', 'gT', { desc = '-- gT: 前のタブへ移動' })
 -- 前のタブに切替
-vim.keymap.set('n', 'gr', ':tabprevious<Cr>', {desc = '-- :tabprevious<Cr>: 前のタブへ移動'})
+vim.keymap.set('n', 'gr', ':tabprevious<Cr>', { desc = '-- :tabprevious<Cr>: 前のタブへ移動' })
 
 -- -----------------------------------------------------------------------------
 -- キーバインド（インサートモード）
 -- -----------------------------------------------------------------------------
 -- jjでエスケープ
 -- inoremap <silent> jj <ESC>
-vim.keymap.set('i', 'jj', '<Esc>', {silent = true}, {desc = ''})
+vim.keymap.set('i', 'jj', '<Esc>', {silent = true}, { desc = '' })
 -- 日本語入力時のjjでエスケープ
 -- inoremap <silent> ｊｊ <ESC>
 -- inoremap <silent> っｊ <ESC>
 -- インサートモードでのカーソル移動
 -- inoremap <C-j> <Down>
-vim.keymap.set('i', '<C-j>', '<down>', {desc = ''})
+vim.keymap.set('i', '<C-j>', '<down>', { desc = '' })
 -- inoremap <C-k> <Up>
-vim.keymap.set('i', '<C-k>', '<Up>', {desc = ''})
+vim.keymap.set('i', '<C-k>', '<Up>', { desc = '' })
 -- inoremap <C-h> <Left>
-vim.keymap.set('i', '<C-h>', '<Left>', {desc = ''})
+vim.keymap.set('i', '<C-h>', '<Left>', { desc = '' })
 -- inoremap <C-l> <Right>
-vim.keymap.set('i', '<C-l>', '<Right>', {desc = ''})
+vim.keymap.set('i', '<C-l>', '<Right>', { desc = '' })
 -- 括弧補完
 -- inoremap "<Enter> ""<left>
-vim.keymap.set('i', '"<Enter>', '""<Left>', {desc = ''})
+vim.keymap.set('i', '"<Enter>', '""<Left>', { desc = '' })
 -- inoremap '<Enter> ''<left>
-vim.keymap.set('i', '\'<Enter>', '\'\'<Left>', {desc = ''})
+vim.keymap.set('i', '\'<Enter>', '\'\'<Left>', { desc = '' })
 -- inoremap (<Enter> ()<Left>
-vim.keymap.set('i', '(<Enter>', '()<Left>', {desc = ''})
+vim.keymap.set('i', '(<Enter>', '()<Left>', { desc = '' })
 -- inoremap [<Enter> []<Left>
-vim.keymap.set('i', '[<Enter>', '[]<Left>', {desc = ''})
+vim.keymap.set('i', '[<Enter>', '[]<Left>', { desc = '' })
 -- inoremap {<Enter> {}<Left>
-vim.keymap.set('i', '{<Enter>', '{}<Left>', {desc = ''})
+vim.keymap.set('i', '{<Enter>', '{}<Left>', { desc = '' })
 
 -- -----------------------------------------------------------------------------
 -- Plugins
@@ -421,7 +421,7 @@ require('lazy').setup({
             })
 
             require('hlslens').setup()
-            require('scrollbar.handlers.search').setup({ })
+            require('scrollbar.handlers.search').setup({})
 
             require('gitsigns').setup()
             require("scrollbar.handlers.gitsigns").setup()
@@ -522,12 +522,12 @@ require('lazy').setup({
                         }
                     },
                 }) 
-                vim.keymap.set('n', '<leader>wl',   '<Cmd>BufferLineCloseRight<CR>'  , {desc = ''})
-                vim.keymap.set('n', '<leader>wh',   '<Cmd>BufferLineCloseLeft<CR>'   , {desc = ''})
-                vim.keymap.set('n', '<leader>wall', '<Cmd>BufferLineCloseOthers<CR>' , {desc = ''})
-                vim.keymap.set('n', '<leader>we',   '<Cmd>BufferLinePickClose<CR>'   , {desc = ''})
-                vim.keymap.set('n', '<C-PageDown>', '<Cmd>BufferLineCycleNext<CR>'   , {desc = ''})
-                vim.keymap.set('n', '<C-PageUp>',   '<Cmd>BufferLineCyclePrev<CR>'   , {desc = ''})
+                vim.keymap.set('n', '<leader>wl',   '<Cmd>BufferLineCloseRight<CR>'  , { desc = '' })
+                vim.keymap.set('n', '<leader>wh',   '<Cmd>BufferLineCloseLeft<CR>'   , { desc = '' })
+                vim.keymap.set('n', '<leader>wall', '<Cmd>BufferLineCloseOthers<CR>' , { desc = '' })
+                vim.keymap.set('n', '<leader>we',   '<Cmd>BufferLinePickClose<CR>'   , { desc = '' })
+                vim.keymap.set('n', '<C-PageDown>', '<Cmd>BufferLineCycleNext<CR>'   , { desc = '' })
+                vim.keymap.set('n', '<C-PageUp>',   '<Cmd>BufferLineCyclePrev<CR>'   , { desc = '' })
             end
         }
     },
@@ -542,10 +542,10 @@ require('lazy').setup({
         event = "VeryLazy",
         config = function()
             require("substitute").setup({})
-            vim.keymap.set("n", "s",  require('substitute').operator, { noremap = true }, {desc = ''})
-            vim.keymap.set("n", "ss", require('substitute').line,     { noremap = true }, {desc = ''})
-            vim.keymap.set("n", "S",  require('substitute').eol,      { noremap = true }, {desc = ''})
-            vim.keymap.set("x", "s",  require('substitute').visual,   { noremap = true }, {desc = ''})
+            vim.keymap.set("n", "s",  require('substitute').operator, { noremap = true }, { desc = '' })
+            vim.keymap.set("n", "ss", require('substitute').line,     { noremap = true }, { desc = '' })
+            vim.keymap.set("n", "S",  require('substitute').eol,      { noremap = true }, { desc = '' })
+            vim.keymap.set("x", "s",  require('substitute').visual,   { noremap = true }, { desc = '' })
         end
     },
     --- Operator (Replace Textobject)
@@ -554,7 +554,7 @@ require('lazy').setup({
 --        dependencies = { 'kana/vim-operator-user' },
 --        config = function()
 --            -- nmap R <Plug>(operator-replace)
---            vim.keymap.set('n', '_', '<Plug>(operator-replace)' , {remap = true})
+--            vim.keymap.set('n', '_', '<Plug>(operator-replace)' , { remap = true})
 --        end
 --    },
     --- Operator (Text modifier operation)
@@ -578,11 +578,11 @@ require('lazy').setup({
         'easymotion/vim-easymotion',
         event = "VeryLazy",
         config = function()
-            vim.keymap.set('',  '<Leader><Leader>', '<Plug>(easymotion-prefix)' , {remap = true}, {desc = ''})
-            vim.keymap.set('',  '<Leader>j',        '<Plug>(easymotion-j)' ,      {remap = true}, {desc = ''})
-            vim.keymap.set('',  '<Leader>k',        '<Plug>(easymotion-k)' ,      {remap = true}, {desc = ''})
-            vim.keymap.set('n', '<Leader>s',        '<Plug>(easymotion-s2)' ,     {remap = true}, {desc = ''})
-            vim.keymap.set('x', '<Leader>s',        '<Plug>(easymotion-s2)' ,     {remap = true}, {desc = ''})
+            vim.keymap.set('',  '<Leader><Leader>', '<Plug>(easymotion-prefix)' , { remap = true }, { desc = '' })
+            vim.keymap.set('',  '<Leader>j',        '<Plug>(easymotion-j)' ,      { remap = true }, { desc = '' })
+            vim.keymap.set('',  '<Leader>k',        '<Plug>(easymotion-k)' ,      { remap = true }, { desc = '' })
+            vim.keymap.set('n', '<Leader>s',        '<Plug>(easymotion-s2)' ,     { remap = true }, { desc = '' })
+            vim.keymap.set('x', '<Leader>s',        '<Plug>(easymotion-s2)' ,     { remap = true }, { desc = '' })
 
             vim.g.EasyMotion_do_mapping = 0
             vim.g.EasyMotion_smartcase= 1
@@ -598,14 +598,14 @@ require('lazy').setup({
         'haya14busa/vim-asterisk',
         event = "VeryLazy",
         config = function()
-            vim.keymap.set('',  '*',   '<Plug>(asterisk-*)' ,   {remap = false}, {desc = ''})
-            vim.keymap.set('',  '#',   '<Plug>(asterisk-#)' ,   {remap = false}, {desc = ''})
-            vim.keymap.set('',  'g*',  '<Plug>(asterisk-g*)' ,  {remap = false}, {desc = ''})
-            vim.keymap.set('',  'g#',  '<Plug>(asterisk-g#)' ,  {remap = false}, {desc = ''})
-            vim.keymap.set('',  'z*',  '<Plug>(asterisk-z*)' ,  {remap = false}, {desc = ''})
-            vim.keymap.set('',  'gz*', '<Plug>(asterisk-gz*)' , {remap = false}, {desc = ''})
-            vim.keymap.set('',  'z#',  '<Plug>(asterisk-z#)' ,  {remap = false}, {desc = ''})
-            vim.keymap.set('',  'gz#', '<Plug>(asterisk-gz#)' , {remap = false}, {desc = ''})
+            vim.keymap.set('',  '*',   '<Plug>(asterisk-*)' ,   { remap = false }, { desc = '' })
+            vim.keymap.set('',  '#',   '<Plug>(asterisk-#)' ,   { remap = false }, { desc = '' })
+            vim.keymap.set('',  'g*',  '<Plug>(asterisk-g*)' ,  { remap = false }, { desc = '' })
+            vim.keymap.set('',  'g#',  '<Plug>(asterisk-g#)' ,  { remap = false }, { desc = '' })
+            vim.keymap.set('',  'z*',  '<Plug>(asterisk-z*)' ,  { remap = false }, { desc = '' })
+            vim.keymap.set('',  'gz*', '<Plug>(asterisk-gz*)' , { remap = false }, { desc = '' })
+            vim.keymap.set('',  'z#',  '<Plug>(asterisk-z#)' ,  { remap = false }, { desc = '' })
+            vim.keymap.set('',  'gz#', '<Plug>(asterisk-gz#)' , { remap = false }, { desc = '' })
         end
     },
     --- Window (Tree)
@@ -623,9 +623,9 @@ require('lazy').setup({
                     adaptive_size = false,
                     width = 45,
                 },
-                vim.keymap.set('n', '<leader>tn', ':NvimTreeToggle<CR>' ,   {silent = true , desc = '-- ツリーの表示/非表示切り替え'}),
-                vim.keymap.set('n', '<leader>tf', ':NvimTreeFindFile<CR>' , {silent = true , desc = '-- ツリーのフォーカスをカレントファイルに移動'}),
-                vim.keymap.set('n', '<leader>tc', ':NvimTreeCollapse<CR>' , {silent = true , desc = '-- ツリーを閉じる'}),
+                vim.keymap.set('n', '<leader>tn', ':NvimTreeToggle<CR>' ,   { silent = true , desc = '-- :NvimTreeToggle<CR> ツリーの表示/非表示切り替え' }),
+                vim.keymap.set('n', '<leader>tf', ':NvimTreeFindFile<CR>' , { silent = true , desc = '-- :NvimTreeFindFile<CR> ツリーのフォーカスをカレントファイルに移動' }),
+                vim.keymap.set('n', '<leader>tc', ':NvimTreeCollapse<CR>' , { silent = true , desc = '-- :NvimTreeCollapse<CR> ツリーを閉じる' }),
             })
 
             -- ファイルオープン時にnvim-treeを表示するがカーソルはバッファに残す
@@ -708,7 +708,14 @@ require('lazy').setup({
                         '--with-filename',
                         '--line-number',
                         '--column',
+                        '--glob=!.git',
+                        '--glob=!.gitignore',
+                        '--glob=!node_modules',
+                        '--glob=!*-sdk-*',
+                        '--glob=!*vendor*',
+                        '--glob=!*.lock',
                         '--smart-case',
+                        '--sort=path',
                         '-uu',
                     },
                     mappings = {
@@ -718,7 +725,18 @@ require('lazy').setup({
                 },
                 pickers = {
                     find_files = {
-                        find_command = { 'rg', '--files', '--hidden', '-g', '!.git' },
+                        find_command = {
+                            'rg',
+                            '--files',
+                            '--hidden',
+                            '--glob', '!.git,',
+                            '--glob', '!.gitignore,',
+                            '--glob', '!node_modules',
+                            '--glob', '!*-sdk-*', 
+                            '--glob', '!*vendor*', 
+                            '--glob', '!*.lock', 
+                            '--smart-case'
+                        },
                     },
                 },
                 extensions = {
@@ -732,8 +750,8 @@ require('lazy').setup({
                         auto_quoting = true, -- enable/disable auto-quoting
                         mappings = { -- extend mappings
                             i = {
-                                ["<C-q>"] = lga_actions.quote_prompt(),
-                                ["<C-f>"] = lga_actions.quote_prompt({ postfix = " -f " }),
+--                                ["<C-q>"] = lga_actions.quote_prompt(),
+--                                ["<C-f>"] = lga_actions.quote_prompt({ postfix = " -f " }),
                             },
                         },
                     }
@@ -745,20 +763,20 @@ require('lazy').setup({
             require("telescope").load_extension "frecency"
 
             local builtin = require('telescope.builtin')
-            vim.keymap.set('n', "<C-t>f", builtin.find_files,              {desc = ''})
+            vim.keymap.set('n', "<C-r>f", builtin.find_files,              { desc = '-- Telescope ファイル検索' })
             -- Use frecency
---          vim.keymap.set('n', "<C-t>o", builtin.oldfiles,                {desc = ''})
-            vim.keymap.set("n", "<C-t>o", "<Cmd>Telescope frecency<CR>",   {desc = ''})
-            vim.keymap.set('n', "<C-t>c", builtin.command_history,         {desc = ''})
-            vim.keymap.set('n', "<C-t>s", builtin.search_history,          {desc = ''})
+--          vim.keymap.set('n', "<C-r>o", builtin.oldfiles,                { desc = '' })
+            vim.keymap.set("n", "<C-r>o", "<Cmd>Telescope frecency<CR>",   { desc = '-- Telescope 最近開いたファイル' })
+            vim.keymap.set('n', "<C-r>c", builtin.command_history,         { desc = '-- Telescope コマンド履歴' })
+            vim.keymap.set('n', "<C-r>s", builtin.search_history,          { desc = '-- Telescope 検索履歴' })
             -- Use live_grep_args
---          vim.keymap.set('n', '<A-g>', builtin.live_grep,                {desc = ''})
-            vim.keymap.set("n", "<C-t>g", ":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>", {desc = ''})
---          vim.keymap.set("n", "<C-t>g", lga_shortcuts.grep_word_under_cursor, {desc = ''})
-            vim.keymap.set('n', "<C-t>b", builtin.buffers, {},             {desc = ''})
-            vim.keymap.set('n', "<C-t>h", builtin.help_tags, {},           {desc = ''})
-            vim.keymap.set('n', "<C-t>r", builtin.registers, {},           {desc = ''})
-            vim.keymap.set('n', "<C-t>k", builtin.keymaps, {},             {desc = ''})
+--          vim.keymap.set('n', "<C-r>g", builtin.live_grep,               { desc = '' })
+            vim.keymap.set("n", "<C-r>g", ":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>", { desc = '-- Telescope Grep' })
+--            vim.keymap.set("n", "<C-r>g", lga_shortcuts.grep_word_under_cursor, { desc = '' })
+            vim.keymap.set('n', "<C-r>b", builtin.buffers, {},             { desc = '-- Telescope バッファ' })
+            vim.keymap.set('n', "<C-r>h", builtin.help_tags, {},           { desc = '-- Telescope ヘルプ' })
+            vim.keymap.set('n', "<C-r>r", builtin.registers, {},           { desc = '-- Telescope レジスタ' })
+            vim.keymap.set('n', "<C-r>k", builtin.keymaps, {},             { desc = '-- Telescope キーマップ' })
         end
     },
     --- Terminal
@@ -774,7 +792,7 @@ require('lazy').setup({
                 },
             })
 
-            vim.keymap.set('n', '<leader>tt', ':ToggleTerm<CR>', {desc = ''})
+            vim.keymap.set('n', '<leader>tt', ':ToggleTerm<CR>', { desc = '' })
 
             local Terminal = require('toggleterm.terminal').Terminal
             local lazygit = Terminal:new({
@@ -786,7 +804,7 @@ require('lazy').setup({
                 lazygit:toggle()
             end
 
-            vim.api.nvim_set_keymap("n", "<leader>tg", "<cmd>lua _lazygit_toggle()<CR>", {noremap = true, silent = true , desc = ''})
+            vim.api.nvim_set_keymap("n", "<leader>tg", "<cmd>lua _lazygit_toggle()<CR>", { noremap = true, silent = true , desc = '' })
         end
     },
     --- Session

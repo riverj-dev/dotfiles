@@ -15,7 +15,7 @@ else
 fi
 
 # other dotfiles
-DOT_FILES=(.zshrc .tmux.conf .tigrc .ctags)
+DOT_FILES=(.zshrc .tmux.conf .tigrc .ctags .ripgreprc)
 
 for file in ${DOT_FILES[@]}
 do
