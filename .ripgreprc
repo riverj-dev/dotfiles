@@ -1,0 +1,19 @@
+# Don't respect ignore files (.gitignore, .ignore, etc.).
+--no-ignore
+
+# Search hidden files and directories.
+--hidden
+
+# Exclude directories.
+--glob=!{.git,.gitignore,.svn,node_modules,tealdeer,Trash,vendor,*-sdk-*}
+
+# Exclude file types.
+--glob=!*.{lock}
+
+--color=always
+
+# Searches case insensitively.
+--smart-case
+
+# Sort by file path.
+--sort=path

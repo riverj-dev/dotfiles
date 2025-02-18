@@ -22,6 +22,9 @@ export XDG_STATE_HOME=$HOME/.local/state
 export JAVA_HOME=$(echo $(java -XshowSettings:properties -version 2>&1 > /dev/null | grep 'java.home') | sed -E 's/.*= +//g' | sed -e 's/\/jre$//g')
 export JDK_HOME=$(echo $(java -XshowSettings:properties -version 2>&1 > /dev/null | grep 'java.home') | sed -E 's/.*= +//g' | sed -e 's/\/jre$//g')
 
+#
+export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
+
 # 補完候補にls --colorsと同じ色をつける
 export DIRCOLORTHEME='dircolors.ansi-light'
 # Ctrl + s を無効化
@@ -263,7 +266,7 @@ alias gps='git push'
 alias rgg='rg -g'
 
 # fast grep
-alias fgrep="rg --column --line-number --no-heading --hidden --no-ignore --glob '!.git/*' --color=always --smart-case"
+alias fgrep="rg --column --line-number --no-heading"
 
 # docker
 alias dc='docker container'
@@ -331,7 +334,7 @@ fi
 # -----------------------------------------------------------------------------
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export PATH="$PATH:$HOME/.fzf/bin"
-export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
+export FZF_DEFAULT_COMMAND='rg --files'
 export FZF_DEFAULT_OPTS='-e --height 50% --border top --reverse --preview-window noborder --bind 'F2:toggle-preview' --info=inline --marker=*'
 export FZF_TMUX=0
 export FZF_TMUX_OPTS="-p 80%"
@@ -360,11 +363,7 @@ function fzf-rg() {
             --column \
             --line-number \
             --no-heading \
-            --hidden \
-            --no-ignore \
-            --glob '!.git/*' \
-            --color=always \
-            --smart-case "${@:-^[^\n]}" 2> /dev/null \
+            "${@:-^[^\n]}" 2> /dev/null \
         | fzf \
             --header='Grep to open file' \
             --no-multi \
@@ -512,8 +511,9 @@ add-zsh-hook preexec preexec_function
 # VcXsrv
 # -----------------------------------------------------------------------------
 if [ -e /mnt/c/WINDOWS/System32/wsl.exe ]; then
+    export DISPLAY=`hostname`.mshome.net:0.0
 #     export DISPLAY=`hostname`:0.0
-     export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{ print $2}'):0.0
+#     export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{ print $2}'):0.0
 #     export DISPLAY=$(ipconfig.exe | awk 'BEGIN { RS="\r\n" } /^[A-Z]/ { isWslSection=/WSL/; }; { if (isWslSection && /IPv4/) { printf $NF; exit; }}'):0
 fi
 
