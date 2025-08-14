@@ -10,7 +10,7 @@
 # -----------------------------------------------------------------------------
 export LANG=en_US.UTF-8
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
-export PATH="$PATH:$HOME/.local/bin"
+export PATH="$HOME/bin:$PATH:$HOME/.local/bin"
 
 # XDG Base Directories
 export XDG_CONFIG_HOME=$HOME/.config

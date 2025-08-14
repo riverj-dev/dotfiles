@@ -624,15 +624,65 @@ require('lazy').setup({
             vim.g.loaded_netrw = 1
             vim.g.loaded_netrwPlugin = 1
 
+            -- nvim-web-devicons設定
+            require('nvim-web-devicons').setup({
+                default = true,
+                color_icons = true,
+                override = {
+                    [""] = {
+                        icon = " ",
+                        color = "#6d8086",
+                        name = "Config"
+                    },
+                },
+            })
+
             require('nvim-tree').setup({
                 view = {
                     adaptive_size = false,
                     width = 45,
                 },
-                vim.keymap.set('n', '<leader>tn', ':NvimTreeToggle<CR>' ,   { silent = true , desc = '-- :NvimTreeToggle<CR> ツリーの表示/非表示切り替え' }),
-                vim.keymap.set('n', '<leader>tf', ':NvimTreeFindFile<CR>' , { silent = true , desc = '-- :NvimTreeFindFile<CR> ツリーのフォーカスをカレントファイルに移動' }),
-                vim.keymap.set('n', '<leader>tc', ':NvimTreeCollapse<CR>' , { silent = true , desc = '-- :NvimTreeCollapse<CR> ツリーを閉じる' }),
+                renderer = {
+                    icons = {
+                        webdev_colors = true,
+                        git_placement = "before",
+                        show = {
+                            file = true,
+                            folder = true,
+                            folder_arrow = true,
+                            git = true,
+                        },
+                        glyphs = {
+                            default = " ",
+                            symlink = "@",
+                            folder = {
+                                arrow_closed = ">",
+                                arrow_open = "v",
+                                default = "📁",
+                                open = "📂",
+                                empty = "📁",
+                                empty_open = "📂",
+                                symlink = "@",
+                                symlink_open = "@",
+                            },
+                            git = {
+                                unstaged = "✗",
+                                staged = "✓",
+                                unmerged = "",
+                                renamed = "➜",
+                                untracked = "★",
+                                deleted = "",
+                                ignored = "◌"
+                            },
+                        },
+                    },
+                },
             })
+
+            -- キーマップ設定
+            vim.keymap.set('n', '<leader>tn', ':NvimTreeToggle<CR>' ,   { silent = true , desc = '-- :NvimTreeToggle<CR> ツリーの表示/非表示切り替え' })
+            vim.keymap.set('n', '<leader>tf', ':NvimTreeFindFile<CR>' , { silent = true , desc = '-- :NvimTreeFindFile<CR> ツリーのフォーカスをカレントファイルに移動' })
+            vim.keymap.set('n', '<leader>tc', ':NvimTreeCollapse<CR>' , { silent = true , desc = '-- :NvimTreeCollapse<CR> ツリーを閉じる' })
 
             -- ファイルオープン時にnvim-treeを表示するがカーソルはバッファに残す
             -- https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup
@@ -680,7 +730,9 @@ require('lazy').setup({
         dependencies = {
             'nvim-lua/plenary.nvim',
             'nvim-tree/nvim-web-devicons',
-            "nvim-telescope/telescope-frecency.nvim",
+            {
+                "nvim-telescope/telescope-frecency.nvim",
+            },
             { 
                 "nvim-telescope/telescope-live-grep-args.nvim" ,
                 version = "^1.0.0",
@@ -766,7 +818,7 @@ require('lazy').setup({
 
             require('telescope').load_extension('fzf')
             require("telescope").load_extension("live_grep_args")
-            require("telescope").load_extension "frecency"
+            require("telescope").load_extension("frecency")
 
             local builtin = require('telescope.builtin')
             vim.keymap.set('n', "<C-r>f", builtin.find_files,              { desc = '-- Telescope ファイル検索' })
@@ -822,29 +874,59 @@ require('lazy').setup({
         'neovim/nvim-lspconfig',
         cmd = { "LspInfo", "LspLog" },
         event = { "BufRead" },
-        init = function()
+        config = function()
+            -- Set up diagnostic signs
+            local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+            for type, icon in pairs(signs) do
+                local hl = "DiagnosticSign" .. type
+                vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+            end
+
+            -- Configure diagnostics
+            vim.diagnostic.config({
+                virtual_text = {
+                    spacing = 4,
+                    prefix = "●",
+                },
+                signs = true,
+                underline = true,
+                update_in_insert = false,
+                severity_sort = true,
+            })
+
+            -- Set up key mappings for LSP
+            vim.api.nvim_create_autocmd('LspAttach', {
+                group = vim.api.nvim_create_augroup('UserLspConfig', {}),
+                callback = function(ev)
+                    local opts = { buffer = ev.buf }
+                    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+                    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+                    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+                    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+                    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+                    vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
+                    vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
+                    vim.keymap.set('n', '<space>wl', function()
+                        print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+                    end, opts)
+                    vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
+                    vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
+                    vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
+                    vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+                    vim.keymap.set('n', '<space>f', function()
+                        vim.lsp.buf.format { async = true }
+                    end, opts)
+                end,
+            })
         end,
     },
     {
         "williamboman/mason.nvim",
         cmd = { "Mason", "MasonInstall" },
         event = { "WinNew", "WinLeave", "BufRead" },
-        init = function()
+        config = function()
             require("mason").setup()
         end,
-    },
-    {
-        "williamboman/mason-lspconfig.nvim",
-        init = function()
-            require("mason-lspconfig").setup()
-            require("mason-lspconfig").setup_handlers {
-                function (server_name)
-                    require("lspconfig")[server_name].setup {
-                        on_attach = on_attach
-                    }
-                end,
-            }
-        end
     },
     {'hrsh7th/nvim-cmp', event = {'InsertEnter', 'CmdlineEnter'} } ,
     {'hrsh7th/cmp-nvim-lsp', event = 'InsertEnter'},
