@@ -32,6 +32,8 @@ stty stop undef
 
 export EDITOR=nvim
 
+export AWS_PROFILE=himotoki-dev
+
 # -----------------------------------------------------------------------------
 # Source Prezto.
 # -----------------------------------------------------------------------------
@@ -80,6 +82,7 @@ colors
 bindkey -v
 # jjでノーマルモード
 bindkey -M viins 'jj' vi-cmd-mode
+bindkey -M viins 'ｊｊ' vi-cmd-mode
 
 # -----------------------------------------------------------------------------
 # Theme and Prompt
@@ -131,14 +134,37 @@ zle -N zle-keymap-select
 autoload -Uz vcs_info
 autoload -Uz add-zsh-hook
 
-zstyle ':vcs_info:*' formats '%F{green}(%s)-[%b]%f'
-zstyle ':vcs_info:*' actionformats '%F{red}(%s)-[%b|%a]%f'
+zstyle ':vcs_info:*' formats '%F{green}%s:[%b]%f'
+zstyle ':vcs_info:*' actionformats '%F{red}%s:[%b|%a]%f'
 
 function _update_vcs_info_msg() {
     LANG=en_US.UTF-8 vcs_info
-    RPROMPT="${vcs_info_msg_0_}"
+    RPROMPT="${vcs_info_msg_0_} %F{208}AWS:[${AWS_PROFILE:-}]%f %F{203}GCP:[${GCP_PROJECT:-}]%f"
 }
 add-zsh-hook precmd _update_vcs_info_msg
+
+# -----------------------------------------------------------------------------
+# Cloud info (gcloudコマンド不使用、設定ファイルから直接読み込み)
+# -----------------------------------------------------------------------------
+GCP_PROJECT=""
+function _update_gcp_project() {
+    local active_config="${HOME}/.config/gcloud/active_config"
+    GCP_PROJECT=""
+    if [[ -f ${active_config} ]]; then
+        local active=$(< ${active_config})
+        local config_file="${HOME}/.config/gcloud/configurations/config_${active}"
+        if [[ -f ${config_file} ]]; then
+            local line
+            while IFS= read -r line; do
+                if [[ ${line} == project* ]]; then
+                    GCP_PROJECT="${line##*= }"
+                    break
+                fi
+            done < ${config_file}
+        fi
+    fi
+}
+add-zsh-hook precmd _update_gcp_project
 
 # -----------------------------------------------------------------------------
 # History
@@ -533,4 +559,8 @@ if [ -e /mnt/c/WINDOWS/System32/wsl.exe ]; then
         done
     fi
 fi
+
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
 

@@ -55,14 +55,14 @@ if vim.fn.has('wsl') == 1 then
     vim.g.clipboard = {
         name = 'WslClipboard',
         copy = {
-            ['+'] = 'xsel -bi',
-            ['*'] = 'xsel -bi',
+            ['+'] = {'sh', '-c', 'iconv -f utf-8 -t utf-16le | clip.exe'},
+            ['*'] = {'sh', '-c', 'iconv -f utf-8 -t utf-16le | clip.exe'},
         },
         paste = {
-            ['+'] = 'xsel -bo',
-            ['*'] = function() return vim.fn.systemlist('xsel -bo | tr -d "\r"') end,
+            ['+'] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+            ['*'] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
         },
-        cache_enabled = 1,
+        cache_enabled = 0,
     }
 end
 
@@ -186,6 +186,12 @@ vim.keymap.set('n', '<leader>o', '<C-o>', { desc = '-- <C-o>: カーソル位置
 -- カーソル位置を進む
 vim.keymap.set('n', '<leader>i', '<C-i>', { desc = '-- <C-i>: カーソル位置を進める' })
 
+-- 全角コロンをコマンドラインに対応
+vim.keymap.set('n', '：', ':', { desc = '-- 全角：をコマンドラインとして使用' })
+
+-- 全角jjでノーマルモード
+vim.keymap.set('i', 'ｊｊ', '<Esc>', { desc = '-- 全角jjでノーマルモード' })
+
 -- -----------------------------------------------------------------------------
 -- キーバインド（ウィンドウ（ペイン）操作）
 -- -----------------------------------------------------------------------------
@@ -293,12 +299,12 @@ require('lazy').setup({
 
             -- Set menu
             dashboard.section.buttons.val = {
-                dashboard.button( "e", "  > New file"      , ":ene <BAR> startinsert <CR>"),
-                dashboard.button( "f", "  > Find file"     , ":Telescope find_files<CR>"),
-                dashboard.button( "r", "  > Recent"        , ":Telescope frecency<CR>"),
-                dashboard.button( "s", "  > Settings"      , ":e $MYVIMRC | :cd %:p:h | split . | wincmd k | pwd<CR>"),
-                dashboard.button( "d", "  > Dotfiles"      , ":cd ~/dotfiles | Telescope find_files<CR>"),
-                dashboard.button( "q", "  > Quit NVIM"     , ":qa<CR>"),
+                dashboard.button( "e", "> New file"      , ":ene <BAR> startinsert <CR>"),
+                dashboard.button( "f", "> Find file"     , ":Telescope find_files<CR>"),
+                dashboard.button( "r", "> Recent"        , ":Telescope frecency<CR>"),
+                dashboard.button( "s", "> Settings"      , ":e $MYVIMRC | :cd %:p:h | split . | wincmd k | pwd<CR>"),
+                dashboard.button( "d", "> Dotfiles"      , ":cd ~/dotfiles | Telescope find_files<CR>"),
+                dashboard.button( "q", "> Quit NVIM"     , ":qa<CR>"),
             }
 
             -- Send config to alpha
@@ -332,7 +338,10 @@ require('lazy').setup({
         init = function()
             require("lualine").setup {
                 options = {
-                    theme = "gruvbox-material"
+                    theme = "gruvbox-material",
+                    icons_enabled = false,
+                    component_separators = { left = '|', right = '|' },
+                    section_separators   = { left = '',  right = ''  },
                 }
             }
         end
@@ -446,7 +455,19 @@ require('lazy').setup({
         "folke/noice.nvim",
         event = "VeryLazy",
         opts = {
-            -- add any options here
+            cmdline = {
+                format = {
+                    cmdline     = { icon = ">" },
+                    search_down = { icon = "/" },
+                    search_up   = { icon = "?" },
+                    filter      = { icon = "$" },
+                    lua         = { icon = "L" },
+                    help        = { icon = "?" },
+                },
+            },
+            popupmenu = {
+                kind_icons = false,
+            },
         },
         dependencies = {
             "MunifTanjim/nui.nvim",
@@ -504,9 +525,14 @@ require('lazy').setup({
             dependencies = 'nvim-tree/nvim-web-devicons',
             init = function()
                 require("bufferline").setup({
---                    options = {
---                        separator_style = 'slant',
---                    },
+                    options = {
+                        show_buffer_icons      = false,
+                        show_buffer_close_icons = false,
+                        show_close_icon        = false,
+                        modified_icon          = '[+]',
+                        left_trunc_marker      = '<',
+                        right_trunc_marker     = '>',
+                    },
                     highlights = {
                         separator = {
                             guifg = '#073642',
@@ -528,6 +554,14 @@ require('lazy').setup({
                         }
                     },
                 }) 
+                vim.keymap.set('n', '<leader>wc', function()
+                    local bufs = vim.fn.getbufinfo({ buflisted = 1 })
+                    if #bufs > 1 then
+                        vim.cmd('bp|bd #')
+                    else
+                        vim.cmd('bd')
+                    end
+                end, { desc = 'Close current buffer' })
                 vim.keymap.set('n', '<leader>wl',   '<Cmd>BufferLineCloseRight<CR>'  , { desc = '' })
                 vim.keymap.set('n', '<leader>wh',   '<Cmd>BufferLineCloseLeft<CR>'   , { desc = '' })
                 vim.keymap.set('n', '<leader>wall', '<Cmd>BufferLineCloseOthers<CR>' , { desc = '' })
@@ -642,37 +676,42 @@ require('lazy').setup({
                     adaptive_size = false,
                     width = 45,
                 },
+                sync_root_with_cwd = true,
+                update_focused_file = {
+                    enable = true,
+                    update_root = true,
+                },
                 renderer = {
                     icons = {
                         webdev_colors = true,
                         git_placement = "before",
                         show = {
-                            file = true,
-                            folder = true,
+                            file = false,
+                            folder = false,
                             folder_arrow = true,
                             git = true,
                         },
                         glyphs = {
-                            default = " ",
+                            default = "",
                             symlink = "@",
                             folder = {
                                 arrow_closed = ">",
                                 arrow_open = "v",
-                                default = "📁",
-                                open = "📂",
-                                empty = "📁",
-                                empty_open = "📂",
+                                default = "[+]",
+                                open = "[-]",
+                                empty = "[.]",
+                                empty_open = "[.]",
                                 symlink = "@",
                                 symlink_open = "@",
                             },
                             git = {
-                                unstaged = "✗",
-                                staged = "✓",
-                                unmerged = "",
-                                renamed = "➜",
-                                untracked = "★",
-                                deleted = "",
-                                ignored = "◌"
+                                unstaged = "M",
+                                staged = "S",
+                                unmerged = "!",
+                                renamed = "R",
+                                untracked = "?",
+                                deleted = "D",
+                                ignored = "-"
                             },
                         },
                     },
@@ -695,8 +734,11 @@ require('lazy').setup({
                 if not real_file and not no_name then
                     return
                 end
-                -- open the tree, find the file but don't focus it
+                -- open the tree without focus, then move focus to tree
                 require("nvim-tree.api").tree.toggle({ focus = false, find_file = true, })
+                vim.defer_fn(function()
+                    vim.cmd("wincmd h")
+                end, 50)
             end
 
             vim.api.nvim_create_autocmd({ "VimEnter" }, {
@@ -751,6 +793,10 @@ require('lazy').setup({
 
             require('telescope').setup({
                 defaults = {
+                    prompt_prefix    = '> ',
+                    selection_caret  = '> ',
+                    entry_prefix     = '  ',
+                    disable_devicons = true,
                     file_ignore_patterns = {
                         '^.git/',
                         '^.cache/',
@@ -783,16 +829,18 @@ require('lazy').setup({
                 },
                 pickers = {
                     find_files = {
+                        disable_devicons = true,
                         find_command = {
                             'rg',
                             '--files',
                             '--hidden',
+                            '--color=never',
                             '--glob', '!.git,',
                             '--glob', '!.gitignore,',
                             '--glob', '!node_modules',
-                            '--glob', '!*-sdk-*', 
-                            '--glob', '!*vendor*', 
-                            '--glob', '!*.lock', 
+                            '--glob', '!*-sdk-*',
+                            '--glob', '!*vendor*',
+                            '--glob', '!*.lock',
                             '--smart-case'
                         },
                     },
@@ -876,7 +924,7 @@ require('lazy').setup({
         event = { "BufRead" },
         config = function()
             -- Set up diagnostic signs
-            local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+            local signs = { Error = "E", Warn = "W", Hint = "H", Info = "I" }
             for type, icon in pairs(signs) do
                 local hl = "DiagnosticSign" .. type
                 vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
@@ -941,6 +989,77 @@ require('lazy').setup({
     {'hrsh7th/vim-vsnip', event = 'InsertEnter'},
     {'hrsh7th/vim-vsnip-integ', event = 'InsertEnter'},
     {'rafamadriz/friendly-snippets', event = 'InsertEnter'},
+
+    -- Markdown render
+    {
+        'MeanderingProgrammer/render-markdown.nvim',
+        dependencies = { 'nvim-treesitter/nvim-treesitter' },
+        opts = {
+            sign         = { enabled = false },
+            heading      = { icons = {} },
+            bullet       = { icons = { '-' } },
+            anti_conceal = { enabled = false },
+            checkbox     = {
+                unchecked = { icon = '[ ]' },
+                checked   = { icon = '[x]' },
+            },
+        },
+    },
+
+    -- Git diff view
+    {
+        'sindrets/diffview.nvim',
+        dependencies = { 'nvim-lua/plenary.nvim' },
+        lazy = false,
+        config = function()
+            require('diffview').setup({
+                use_icons = false,
+                signs = {
+                    fold_closed = "> ",
+                    fold_open   = "v ",
+                    done        = "x",
+                },
+                icons = {
+                    folder_closed = "[+]",
+                    folder_open   = "[-]",
+                },
+            })
+            vim.keymap.set('n', '<C-PageDown>', ':tabnext<CR>',     { silent = true, desc = '次のタブへ移動' })
+            vim.keymap.set('n', '<C-PageUp>',   ':tabprevious<CR>', { silent = true, desc = '前のタブへ移動' })
+            vim.api.nvim_create_autocmd('User', {
+                pattern = 'DiffviewViewOpened',
+                callback = function() vim.opt.showtabline = 0 end,
+            })
+            vim.api.nvim_create_autocmd('User', {
+                pattern = 'DiffviewViewClosed',
+                callback = function() vim.opt.showtabline = 1 end,
+            })
+        end,
+        keys = {
+            { '<leader>gd', function()
+                local cwd = vim.fn.getcwd()
+                local root = vim.fn.systemlist('git -C "' .. cwd .. '" rev-parse --show-toplevel 2>/dev/null')[1]
+                if root and root ~= '' and not root:match('^fatal') then
+                    vim.cmd('cd ' .. vim.fn.fnameescape(root))
+                end
+                vim.cmd('DiffviewOpen')
+            end, desc = 'Git diff view' },
+            { '<leader>gh', '<Cmd>DiffviewFileHistory<CR>', desc = 'Git file history' },
+            { '<leader>gx', '<Cmd>DiffviewClose<CR>',       desc = 'Close diff view' },
+        },
+    },
+
+    -- Claude Code integration
+    {
+        "coder/claudecode.nvim",
+        dependencies = { "folke/snacks.nvim" },
+        config = true,
+        keys = {
+            { "<leader>ac", "<cmd>ClaudeCode<cr>",      desc = "Toggle Claude" },
+            { "<leader>af", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
+            { "<leader>as", "<cmd>ClaudeCodeSend<cr>",  mode = "v", desc = "Send to Claude" },
+        },
+    },
 })
 
 local cmp = require('cmp')
@@ -990,8 +1109,19 @@ cmp.setup({
     })
 })
 
+local cmdline_mapping = cmp.mapping.preset.cmdline()
+
+vim.keymap.set('c', '<Down>', function()
+    if cmp.visible() then cmp.select_next_item()
+    else vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Down>', true, false, true), 'n', false) end
+end)
+vim.keymap.set('c', '<Up>', function()
+    if cmp.visible() then cmp.select_prev_item()
+    else vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Up>', true, false, true), 'n', false) end
+end)
+
 cmp.setup.cmdline({ '/', '?' }, {
-    mapping = cmp.mapping.preset.cmdline(),
+    mapping = cmdline_mapping,
     sources = cmp.config.sources({
         { name = 'nvim_lsp_document_symbol' }
     }, {
@@ -1000,7 +1130,7 @@ cmp.setup.cmdline({ '/', '?' }, {
 })
 
 cmp.setup.cmdline(':', {
-    mapping = cmp.mapping.preset.cmdline(),
+    mapping = cmdline_mapping,
     sources = cmp.config.sources({
         { name = 'path' }
     }, {
